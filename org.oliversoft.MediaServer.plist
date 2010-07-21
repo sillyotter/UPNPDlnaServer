@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC -//Apple Computer//DTD PLIST 1.0//EN
+http://www.apple.com/DTDs/PropertyList-1.0.dtd >
+<plist version="1.0">
+	<dict>
+		<key>Label</key>
+		<string>com.oliversoft.MediaServer</string>
+		<key>ProgramArguments</key>
+		<array>
+			<string>/usr/bin/mono</string>
+			<string>--optimize=all</string>
+			<string>MediaServer.exe</string>
+			<string>MediaServer/Configuration.xml</string>
+			<string>MediaServerLog.xml</string>
+		</array>
+		<!--key>KeepAlive</key>
+		<true/-->
+		<key>RunAtLoad</key>
+		<true/>
+		<key>WorkingDirectory</key>
+		<string>/Users/guyoliver/Project/UPNP/</string>
+		<key>HopefullyExitsFirst</key>
+		<true/>
+		<key>LowPriorityIO</key>
+		<false/>
+		<key>Nice</key>
+		<integer>-20</integer>
+	</dict>
+</plist>
+

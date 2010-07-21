@@ -1,0 +1,160 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Threading;
+using System.Xml;
+using System.Xml.Linq;
+using MediaServer.Configuration;
+using MediaServer.Utility;
+
+namespace MediaServer.Web
+{
+	class BaseSoapHandler : BaseRequestHandler
+	{
+		private readonly Dictionary<string, MethodInfo> _soapActions = new Dictionary<string, MethodInfo>();
+		
+		public BaseSoapHandler()
+		{
+			var methods = GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.InvokeMethod);
+			foreach (var method in methods)
+			{
+				var attributes = method.GetCustomAttributes(typeof(SoapActionAttribute), true).Cast<SoapActionAttribute>();
+				var attr = attributes.FirstOrDefault();
+				if (attr != null)
+					_soapActions.Add(attr.Action, method);
+			}
+		}
+
+		private XElement InvokeMethod(string soapAction, XContainer invokeData)
+		{
+			soapAction = soapAction.Replace('"', ' ').Trim();
+
+			var methodInfo = _soapActions[soapAction];
+	
+			var parametersInfo = methodInfo.GetParameters();
+			var parameters = new List<object>();
+			var names = new List<string>();
+			var pieces = soapAction.Split('#');
+			var methodName = pieces[1];
+			XNamespace u = pieces[0];
+			XNamespace s = "http://schemas.xmlsoap.org/soap/envelope/";
+
+			foreach (var item in parametersInfo)
+			{
+				var attributes = item.GetCustomAttributes(typeof(SoapParameterAttribute), true).Cast<SoapParameterAttribute>();
+				var attribute = attributes.FirstOrDefault();
+				if (attribute != null)
+				{
+					var name = attribute.Name;
+					names.Add(name);
+
+					if (item.IsOut)
+					{
+						if (item.ParameterType.GetElementType() == typeof(string))
+							parameters.Add(String.Empty);
+						else
+							parameters.Add(Activator.CreateInstance(item.ParameterType.GetElementType()));
+					}
+					else
+					{
+						var val = invokeData.Descendants(u + methodName).Elements(name).FirstOrDefault().Value;
+						if (item.ParameterType == typeof(string))
+						{
+							parameters.Add(val);
+						}
+						else if (item.ParameterType.IsPrimitive)
+						{
+							var data = Convert.ChangeType(val, item.ParameterType);
+							parameters.Add(data);
+						}
+						else if (item.ParameterType.IsEnum)
+						{
+							var data = Enum.Parse(item.ParameterType, val);
+							parameters.Add(data);
+						}
+					}
+				}
+			}
+
+			try
+			{
+				var ps = parameters.ToArray();
+				methodInfo.Invoke(this, ps);
+
+				var outs = names
+					.ZipWith(ps, (a, b) => new { Name = a, Value = b.ToString() })
+					.ZipWith(parametersInfo, (a, b) => new { a.Name, a.Value, b.IsOut })
+					.Where(item => item.IsOut);
+
+				var root = new XElement(s + "Envelope",
+				                        new XAttribute(XNamespace.Xmlns + "s", s.ToString()),
+				                        new XAttribute(s + "encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/"),
+				                        new XElement(s + "Body",
+				                                     new XElement(u + methodName + "Response",
+				                                                  new XAttribute(XNamespace.Xmlns + "u", u.ToString()),
+				                                                  from element in outs select new XElement(element.Name, element.Value)))
+					);
+				return root;
+			}
+			catch (Exception ex)
+			{
+				Logger.Instance.Exception("Failed Soap Invocation", ex);
+			}
+			return null;
+		}
+
+        public override void ProcessRequest(EndPoint localEndPoint, EndPoint remoteEndpoint, string method, Uri requestUri, 
+            IDictionary<string, string> headers, UnbufferedStreamReader inputStream, StreamWriter outputStream)
+        {
+			if (method.ToUpper() == "POST")
+			{
+				var action = headers["SOAPACTION"];
+				if (!String.IsNullOrEmpty(action))
+				{
+				    var inputLength = int.Parse(headers["Content-Length"]);
+				    var buffer = new byte[inputLength];
+                    
+				    inputStream.BaseStream.Read(buffer, 0, inputLength);
+
+				    XElement postData;
+                    using (var ms = new MemoryStream(buffer))
+                    {
+                        postData = XElement.Load(XmlReader.Create(ms));
+                    }
+
+				    var localData = Thread.GetNamedDataSlot("localEndPoint");
+					Thread.SetData(localData, localEndPoint);
+
+					var result = InvokeMethod(action, postData);
+
+					Thread.FreeNamedDataSlot("localEndPoint");
+					if (result != null)
+					{
+						var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), result);
+						using (var s = new MemoryStream())
+						using (var tw = new StreamWriter(s))
+						{
+							doc.Save(tw);
+							var len = s.Length;
+							var data = s.GetBuffer();
+
+                            outputStream.WriteLine("HTTP/1.0 200 OK");
+                            outputStream.WriteLine("Server: " + Settings.Instance.ServerName);
+                            outputStream.WriteLine("Content-Length: " + len);
+                            outputStream.WriteLine("Content-Type: text/xml");
+                            outputStream.WriteLine("Date: " + DateTime.Now.ToUniversalTime().ToString("R"));		
+                            outputStream.WriteLine("EXT: ");
+						    outputStream.WriteLine();
+							outputStream.BaseStream.Write(data, 0, (int)len);
+						}
+						return;
+					}
+				}
+			}
+            NotFound(outputStream);
+		}
+	}
+}

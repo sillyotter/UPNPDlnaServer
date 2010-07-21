@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaServer", "MediaServer\MediaServer.csproj", "{2A59B3E6-49C0-4FD7-B2AC-936F978BD5FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSDP", "SSDP\SSDP.csproj", "{1990BD0C-27FF-449B-ABED-2D0F9CDC081A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaBrowser", "MediaBrowser\MediaBrowser.csproj", "{906FAFFD-9C78-48D8-988F-B84D2C3E9290}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2A59B3E6-49C0-4FD7-B2AC-936F978BD5FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A59B3E6-49C0-4FD7-B2AC-936F978BD5FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A59B3E6-49C0-4FD7-B2AC-936F978BD5FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A59B3E6-49C0-4FD7-B2AC-936F978BD5FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1990BD0C-27FF-449B-ABED-2D0F9CDC081A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1990BD0C-27FF-449B-ABED-2D0F9CDC081A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1990BD0C-27FF-449B-ABED-2D0F9CDC081A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1990BD0C-27FF-449B-ABED-2D0F9CDC081A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{906FAFFD-9C78-48D8-988F-B84D2C3E9290}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{906FAFFD-9C78-48D8-988F-B84D2C3E9290}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{906FAFFD-9C78-48D8-988F-B84D2C3E9290}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{906FAFFD-9C78-48D8-988F-B84D2C3E9290}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

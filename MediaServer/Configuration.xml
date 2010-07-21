@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+	<Network>
+		<Port>12345</Port>
+	</Network>
+	<Storage staticPath="MediaServer/Resources/">
+		<Media>
+			<Dir name="My Movies">/Volumes/Storage/Media/Movies/</Dir>
+			<iTunes name="Guy's Music">/Volumes/Storage/Media/GuysiTunes/iTunes Library.xml</iTunes>
+			<iTunes name="Lisa's Music">/Volumes/Storage/Media/LisasiTunes/iTunes Library.xml</iTunes>
+			<iPhoto name="Pictures">/Volumes/Storage/Media/Pictures/iPhoto Library/AlbumData.xml</iPhoto>
+		</Media>
+	</Storage>
+	<Icons movie="MovieIcon.png" music="MusicIcon.png" image="ImageIcon.png" server="ServerIcon.png" />
+</Configuration>

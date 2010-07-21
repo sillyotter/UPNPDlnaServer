@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+  <device>
+    <deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
+    <friendlyName>My Media Server</friendlyName>
+    <manufacturer>GLO</manufacturer>
+    <modelName>GLO</modelName>
+    <UDN>uuid:023b69d7-7fb1-488a-884f-b6ecf7aed031</UDN>
+    <iconList>
+      <icon>
+        <mimetype>image/png</mimetype>
+        <width>256</width>
+        <height>256</height>
+        <depth>32</depth>
+        <url>/MediaServer/ThisIsNotARealIcon.png</url>
+      </icon>
+    </iconList>
+    <serviceList>
+      <service>
+        <serviceType>urn:schemas-upnp-org:service:ContentDirectory:1</serviceType>
+        <serviceId>urn:upnp-org:serviceId:ContentDirectory</serviceId>
+        <SCPDURL>/MediaServer/ContentDirectory.xml</SCPDURL>
+        <controlURL>/MediaServer/Content/Control</controlURL>
+        <eventSubURL>/MediaServer/Content/Event</eventSubURL>
+      </service>
+      <service>
+        <serviceType>urn:schemas-upnp-org:service:ConnectionManager:1</serviceType>
+        <serviceId>urn:upnp-org:serviceId:ConnectionManager</serviceId>
+        <SCPDURL>/MediaServer/ConnectionManager.xml</SCPDURL>
+        <controlURL>/MediaServer/Connection/Control</controlURL>
+        <eventSubURL>/MediaServer/Connection/Event</eventSubURL>
+      </service>
+    </serviceList>
+  </device>
+</root>
