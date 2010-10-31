@@ -58,8 +58,8 @@
 				<include name="SSDP.dll"/>
 				<include name="System.Xml.Linq.dll"/>
 				<include name="System.Web.dll"/>
-				<include name="Mono.Posix.dll"/>
 				<include name="FlickrNet.dll"/>
+				<include name="Mono.Posix.dll"/>
 				<include name="taglib-sharp.dll"/>
 				<include name="Google.GData.Client.dll"/>
 				<include name="Google.GData.Extensions.dll"/>
