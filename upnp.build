@@ -7,8 +7,14 @@
 	<property name="debug" value="true" overwrite="false"/>
 	<property name="build.dir" value="build"/>
 	<property name="src.dir" value="src"/>
+	<property name="server.src.dir" value="${path::combine(src.dir, 'MediaServer')}"/>
+	<property name="ssdp.src.dir" value="${path::combine(src.dir, 'SSDP')}"/>
+	<property name="client.src.dir" value="${path::combine(src.dir, 'MediaBrowser')}"/>
 	<property name="deploy.dir" value="bin"/>
 	<property name="lib.dir" value="lib"/>
+	<property name="support.dir" value="support"/>
+	<property name="lighttpd.dir" value="${path::combine(support.dir, 'lighttpd-1.4.28')}"/>
+	<property name="lighttpd.install.dir" value="${path::get-full-path(path::combine(deploy.dir, 'lighttpd'))}"/>
 
 	<target name="directories" description="create required output directories, if not exists">
 		<if test="${not directory::exists(build.dir)}">
@@ -22,6 +28,7 @@
 	<target name="clean" description="remove all generated files">
 		<delete dir="${build.dir}" failonerror="false"/>
 		<delete dir="${deploy.dir}" failonerror="false"/>
+		<delete dir="${lighttpd.dir}" failonerror="false"/>
 		<delete failonerror="false">
 			<fileset basedir="." defaultexcludes="false">
 				<include name="**/*~"/>
@@ -31,7 +38,7 @@
 
 	<target name="SSDPLib" description="build the Simple Service Discovery Protocol Library" depends="directories">
 		<csc target="library" output="${path::combine(build.dir, 'SSDP.dll')}" debug="${debug}" optimize="${not debug}">
-			<sources basedir="${path::combine(src.dir, 'SSDP')}">
+			<sources basedir="${ssdp.src.dir}">
 				<include name="**/*.cs"/>
 			</sources>
 		</csc>
@@ -39,7 +46,7 @@
 
 	<target name="MediaServer" description="Build the media server" depends="directories,SSDPLib">
 		<csc target="exe" output="${path::combine(build.dir, 'MediaServer.exe')}" debug="${debug}" optimize="${not debug}">
-			<sources basedir="${path::combine(src.dir, 'MediaServer')}">
+			<sources basedir="${server.src.dir}">
 				<include name="**/*.cs"/>
 			</sources>
 			<references>
@@ -63,7 +70,7 @@
 
 	<target name="MediaBrowser" description="Build the media browser" depends="directories,SSDPLib">
 		<csc target="exe" output="${path::combine(build.dir, 'MediaBrowser.exe')}" debug="${debug}" optimize="${not debug}">
-			<sources basedir="${path::combine(src.dir, 'MediaBrowser')}">
+			<sources basedir="${client.src.dir}">
 				<include name="**/*.cs"/>
 			</sources>
 			<references>
@@ -76,7 +83,22 @@
 		</csc>
 	</target>
 
-	<target name="build" description="build all apps" depends="MediaServer,MediaBrowser"/>
+	<target name="lighttpd" description="lighttpd web server for use in media server" depends="directories">
+		<if test="${not directory::exists(lighttpd.install.dir)}">
+			<exec workingdir="${support.dir}" program="tar" output="${path::combine(lighttpd.dir, 'build-log-tar')}">
+				<arg value="xzf"/>
+				<arg value="lighttpd-1.4.28.tar.gz"/>
+			</exec>
+			<exec basedir="${lighttpd.dir}" workingdir="${lighttpd.dir}" program="configure" output="${path::combine(lighttpd.dir, 'build-log-config')}">
+				<arg value="--prefix=${lighttpd.install.dir}"/>
+			</exec>
+			<exec workingdir="${lighttpd.dir}" program="make" output="${path::combine(lighttpd.dir, 'build-log-config')}">
+				<arg value="install"/>
+			</exec>
+		</if>
+	</target>
+
+	<target name="build" description="build all apps" depends="MediaServer,MediaBrowser,lighttpd"/>
 
 	<target name="deploy" description="deploy apps and required dependancies" depends="build">
 		<copy todir="${deploy.dir}" flatten="true">
