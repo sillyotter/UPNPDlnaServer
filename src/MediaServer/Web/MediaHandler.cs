@@ -18,7 +18,7 @@ namespace MediaServer.Web
 	internal class MediaHandler : BaseRequestHandler
 	{
 		private const int BufferSize = 64 * 1024;
-		private readonly Regex _rangeMatch = new Regex(@"bytes=(\d+)-(\d+)");
+		//private readonly Regex _rangeMatch = new Regex(@"bytes=(\d+)-(\d+)");
 
 		#region Implementation of BaseRequestHandler
 
@@ -30,7 +30,6 @@ namespace MediaServer.Web
 			var requestedFile = node != null ? node.Location : "";
 
 			var location = "http://" + localEndPoint.ToString().Split(':')[0] + ":54321" + requestedFile.Substring(22);
-			System.Console.WriteLine("!!!!!" + location);
 			Redirect(outputStream, new Uri(location));
 		}
 

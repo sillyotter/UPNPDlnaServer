@@ -1,0 +1,24 @@
+# lighttpd config file
+
+server.port = {{port}}
+server.document-root = "/tmp"
+server.username = "nobody"
+server.groupname = "nogroup"
+server.force-lowercase-filenames = "disable"
+server.modules = ( "mod_alias" )
+
+#debug.log-request-header = "enable"
+#debug.log-request-handling = "enable"
+#debug.log-response-header = "enable"
+
+dir-listing.activate = "disable"
+
+mimetype.assign = (
+	{{mimetypes}}
+	"" => "application/octet-stream"
+)
+
+{{aliases}}
+
+
+

@@ -34,7 +34,7 @@ namespace MediaServer.Media.Nodes
 				{
 					FetchImageInformation();
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
 					//Logger.Instance.Exception(ex);
 					throw;

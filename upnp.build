@@ -14,7 +14,8 @@
 	<property name="lib.dir" value="lib"/>
 	<property name="support.dir" value="support"/>
 	<property name="lighttpd.dir" value="${path::combine(support.dir, 'lighttpd-1.4.28')}"/>
-	<property name="lighttpd.install.dir" value="${path::get-full-path(path::combine(deploy.dir, 'lighttpd'))}"/>
+	<property name="lighttpd.build.dir" value="${path::get-full-path(path::combine(build.dir, 'lighttpd'))}"/>
+	<!--property name="lighttpd.install.dir" value="${path::get-full-path(path::combine(deploy.dir, 'lighttpd'))}"/-->
 
 	<target name="directories" description="create required output directories, if not exists">
 		<if test="${not directory::exists(build.dir)}">
@@ -84,13 +85,13 @@
 	</target>
 
 	<target name="lighttpd" description="lighttpd web server for use in media server" depends="directories">
-		<if test="${not directory::exists(lighttpd.install.dir)}">
+		<if test="${not directory::exists(lighttpd.build.dir)}">
 			<exec workingdir="${support.dir}" program="tar" output="${path::combine(lighttpd.dir, 'build-log-tar')}">
 				<arg value="xzf"/>
 				<arg value="lighttpd-1.4.28.tar.gz"/>
 			</exec>
 			<exec basedir="${lighttpd.dir}" workingdir="${lighttpd.dir}" program="configure" output="${path::combine(lighttpd.dir, 'build-log-config')}">
-				<arg value="--prefix=${lighttpd.install.dir}"/>
+				<arg value="--prefix=${lighttpd.build.dir}"/>
 			</exec>
 			<exec workingdir="${lighttpd.dir}" program="make" output="${path::combine(lighttpd.dir, 'build-log-config')}">
 				<arg value="install"/>
@@ -109,12 +110,18 @@
 			</fileset>
 		</copy>
 		<copy todir="${deploy.dir}" flatten="false">
+			<fileset basedir="${build.dir}">
+				<include name="${lighttpd.build.dir}/**/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir}" flatten="false">
 			<fileset basedir="${src.dir}">
 				<include name="MediaServer/Resources/**/*"/>
 			</fileset>
 		</copy>
 		<copy todir="${deploy.dir}" file="${path::combine(src.dir, 'org.oliversoft.MediaServer.plist')}"/>
 		<copy todir="${deploy.dir}" file="${path::combine(src.dir, 'MediaServer/Configuration.xml')}"/>
+		<copy todir="${deploy.dir}" file="${path::combine(src.dir, 'lighttpd.conf.tmpl')}"/>
 	</target>
 
 	<target name="run" description="execute program" depends="deploy">

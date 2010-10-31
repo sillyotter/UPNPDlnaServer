@@ -41,6 +41,13 @@ namespace MediaServer
 			//Logger.Instance.Info("Starting");			
 			
 			Settings.Instance.LoadConfigurationFile(configFileName);
+
+			var lighttpd = Lighttpd.Instance;
+			lighttpd.Port = 54321;
+			lighttpd.UrlMapping["/Movies/"] = "/Volumes/Storage/Media/Movies/";
+
+			lighttpd.Start();
+
 			MediaRepository.Instance.Initialize();
 
 			var upnplistener = new UpnpMediaServerMessageHandler();
@@ -61,6 +68,8 @@ namespace MediaServer
 
 			upnplistener.Stop();
 			upnpsoapserver.Stop();
+
+			lighttpd.Stop();
 		}
 	}
 }

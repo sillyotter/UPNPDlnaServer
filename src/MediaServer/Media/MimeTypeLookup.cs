@@ -186,6 +186,11 @@ namespace MediaServer.Media
 	                {"zip", "application/zip"},
 	            };
 
+		public static IEnumerable<KeyValuePair<string,string>> GetAllMappings()
+		{
+			return MimeTypes;
+		}
+
 		public static string GetMimeType(string filename)
 		{
 			var extension = Path.GetExtension(filename).Substring(1).ToLower();
