@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<project name="UPNP" default="deploy" basedir=".">
+
+	<description>A UPNP media server for OSX and PS3</description>
+
+	<property name="debug" value="true" overwrite="false"/>
+	<property name="build.dir" value="build"/>
+	<property name="src.dir" value="src"/>
+	<property name="deploy.dir" value="bin"/>
+	<property name="lib.dir" value="lib"/>
+
+	<target name="directories" description="create required output directories, if not exists">
+		<if test="${not directory::exists(build.dir)}">
+			<mkdir dir="${build.dir}"/>
+		</if>
+		<if test="${not directory::exists(deploy.dir)}">
+			<mkdir dir="${deploy.dir}"/>
+		</if>
+	</target>
+
+	<target name="clean" description="remove all generated files">
+		<delete dir="${build.dir}" failonerror="false"/>
+		<delete dir="${deploy.dir}" failonerror="false"/>
+		<delete failonerror="false">
+			<fileset basedir="." defaultexcludes="false">
+				<include name="**/*~"/>
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="SSDPLib" description="build the Simple Service Discovery Protocol Library" depends="directories">
+		<csc target="library" output="${path::combine(build.dir, 'SSDP.dll')}" debug="${debug}" optimize="${not debug}">
+			<sources basedir="${path::combine(src.dir, 'SSDP')}">
+				<include name="**/*.cs"/>
+			</sources>
+		</csc>
+	</target>
+
+	<target name="MediaServer" description="Build the media server" depends="directories,SSDPLib">
+		<csc target="exe" output="${path::combine(build.dir, 'MediaServer.exe')}" debug="${debug}" optimize="${not debug}">
+			<sources basedir="${path::combine(src.dir, 'MediaServer')}">
+				<include name="**/*.cs"/>
+			</sources>
+			<references>
+				<lib>
+					<include name="${build.dir}"/>
+					<include name="${lib.dir}"/>
+				</lib>
+				<include name="SSDP.dll"/>
+				<include name="System.Xml.Linq.dll"/>
+				<include name="System.Web.dll"/>
+				<include name="Mono.Posix.dll"/>
+				<include name="FlickrNet.dll"/>
+				<include name="taglib-sharp.dll"/>
+				<include name="Google.GData.Client.dll"/>
+				<include name="Google.GData.Extensions.dll"/>
+				<include name="Google.GData.Photos.dll"/>
+				<include name="Google.GData.YouTube.dll"/>
+			</references>
+		</csc>
+	</target>
+
+	<target name="MediaBrowser" description="Build the media browser" depends="directories,SSDPLib">
+		<csc target="exe" output="${path::combine(build.dir, 'MediaBrowser.exe')}" debug="${debug}" optimize="${not debug}">
+			<sources basedir="${path::combine(src.dir, 'MediaBrowser')}">
+				<include name="**/*.cs"/>
+			</sources>
+			<references>
+				<lib>
+					<include name="${build.dir}"/>
+				</lib>
+				<include name="System.Xml.Linq.dll"/>
+				<include name="SSDP.dll"/>
+			</references>
+		</csc>
+	</target>
+
+	<target name="build" description="build all apps" depends="MediaServer,MediaBrowser"/>
+
+	<target name="deploy" description="deploy apps and required dependancies" depends="build">
+		<copy todir="${deploy.dir}" flatten="true">
+			<fileset>
+				<include name="${build.dir}/*.dll"/>
+				<include name="${build.dir}/*.exe"/>
+				<include name="${lib.dir}/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir}" flatten="false">
+			<fileset basedir="${src.dir}">
+				<include name="MediaServer/Resources/**/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir}" file="${path::combine(src.dir, 'org.oliversoft.MediaServer.plist')}"/>
+		<copy todir="${deploy.dir}" file="${path::combine(src.dir, 'MediaServer/Configuration.xml')}"/>
+	</target>
+
+	<target name="run" description="execute program" depends="deploy">
+		<exec basedir="${deploy.dir}" managed="true" workingdir="${deploy.dir}" program="MediaServer.exe">
+			<arg value="Configuration.xml"/>
+		</exec>
+	</target>
+</project>
