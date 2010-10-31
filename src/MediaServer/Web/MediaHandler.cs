@@ -17,9 +17,6 @@ namespace MediaServer.Web
 {
 	internal class MediaHandler : BaseRequestHandler
 	{
-		private const int BufferSize = 64 * 1024;
-		//private readonly Regex _rangeMatch = new Regex(@"bytes=(\d+)-(\d+)");
-
 		#region Implementation of BaseRequestHandler
 
         public override void ProcessRequest(EndPoint localEndPoint, EndPoint remoteEndpoint, string method, Uri requestUri,

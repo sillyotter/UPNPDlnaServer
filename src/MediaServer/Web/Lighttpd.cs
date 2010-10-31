@@ -57,8 +57,6 @@ namespace MediaServer.Web
 			tmplText = tmplText.Replace("{{mimetypes}}", msb.ToString());
 			tmplText = tmplText.Replace("{{aliases}}", asb.ToString());
 
-			Console.WriteLine(tmplText);
-			
 			File.WriteAllText(tfn, tmplText);
 		}
 
@@ -91,7 +89,6 @@ namespace MediaServer.Web
 
 
 					var cmdLine = String.Format("-D -m {0} -f {1}", modpath, cf);
-					Console.WriteLine(exepath + " " + cmdLine);
 						
 					_proc = Process.Start(exepath, cmdLine);
 				}
