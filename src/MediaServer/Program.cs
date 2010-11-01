@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using MediaServer.Configuration;
 using MediaServer.Media;
@@ -43,8 +46,17 @@ namespace MediaServer
 			Settings.Instance.LoadConfigurationFile(configFileName);
 
 			var lighttpd = Lighttpd.Instance;
-			lighttpd.Port = 54321;
-			lighttpd.UrlMapping["/Movies/"] = "/Volumes/Storage/Media/Movies/";
+			lighttpd.Port = Settings.Instance.MediaPort;
+
+			var itunesQuery = from item in Settings.Instance.iTunesFolders
+				select new KeyValuePair<string,string>(item.Key, Path.GetDirectoryName(item.Value));
+			var iphotoQuery = from item in Settings.Instance.iPhotoFolders
+				select new KeyValuePair<string,string>(item.Key, Path.GetDirectoryName(item.Value));
+
+			foreach (var item in Settings.Instance.MediaFolders.Union(itunesQuery).Union(iphotoQuery))
+			{
+				lighttpd.UrlMapping[item.Value] = item.Value;
+			}
 
 			lighttpd.Start();
 

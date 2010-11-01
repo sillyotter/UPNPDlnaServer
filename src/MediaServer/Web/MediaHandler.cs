@@ -22,7 +22,7 @@ namespace MediaServer.Web
 			var node = MediaRepository.Instance.GetNodeForId(new Guid(strId)) as FileNode;
 			var requestedFile = node != null ? node.Location : "";
 
-			var location = "http://" + localEndPoint.ToString().Split(':')[0] + ":54321" + requestedFile.Substring(22);
+			var location = "http://" + localEndPoint.ToString().Split(':')[0] + ":" + Settings.Instance.MediaPort + requestedFile;
 			Redirect(outputStream, new Uri(location));
 		}
 

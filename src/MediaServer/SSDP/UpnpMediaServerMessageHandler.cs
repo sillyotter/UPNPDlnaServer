@@ -25,7 +25,7 @@ namespace MediaServer.SSDP
 			{
 				return from address in Dns.GetHostEntry(Dns.GetHostName()).AddressList
 					   where address.AddressFamily == AddressFamily.InterNetwork
-					   select new Uri("http://" + address + ":" + Settings.Instance.Port + "/MediaServer/");
+					   select new Uri("http://" + address + ":" + Settings.Instance.QueryPort + "/MediaServer/");
 			}
 		}
 

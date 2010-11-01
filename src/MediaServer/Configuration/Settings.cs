@@ -307,19 +307,29 @@ namespace MediaServer.Configuration
 		{
 			var portQuery =
 				from item in configDoc.Elements("Network")
-				let portNode = item.Element("Port")
+				let portNode = item.Element("QueryPort")
 				where portNode != null && !String.IsNullOrEmpty((string) portNode) &&
 				      Regex.IsMatch((string) portNode, "^[0-9]+$")
 				select ((string)portNode).Trim();
 
 			int port;
-			Port = int.TryParse(portQuery.FirstOrDefault(), out port) ? port : 12345;
+			QueryPort = int.TryParse(portQuery.FirstOrDefault(), out port) ? port : 12345;
+
+			portQuery =
+				from item in configDoc.Elements("Network")
+				let portNode = item.Element("MediaPort")
+				where portNode != null && !String.IsNullOrEmpty((string) portNode) &&
+				      Regex.IsMatch((string) portNode, "^[0-9]+$")
+				select ((string)portNode).Trim();
+
+			MediaPort = int.TryParse(portQuery.FirstOrDefault(), out port) ? port : 54321;
 		}
 
 		public string ServerName { get { return "MacOSX UPnP/1.0 GUPNPMS/0.1"; } }
 		public string FriendlyName { get; private set; }
 		public Guid DeviceId { get; private set; }
-		public int Port { get; private set; }
+		public int QueryPort { get; private set; }
+		public int MediaPort { get; private set; }
 		public string StaticResources { get; private set; }
 		public string MovieIcon { get; private set; }
 		public string ImageIcon { get; private set; }

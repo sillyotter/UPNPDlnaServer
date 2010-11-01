@@ -15,7 +15,7 @@ namespace MediaServer.Web
     {
         private const int HandlerCount = 10;
         private readonly Regex _requestMatcher = new Regex(@"([A-Za-z]+) ([^ \t]+) \S+", RegexOptions.IgnoreCase);
-        private readonly TcpListener _listener = new TcpListener(IPAddress.Any, Settings.Instance.Port);
+        private readonly TcpListener _listener = new TcpListener(IPAddress.Any, Settings.Instance.QueryPort);
         private readonly BlockingQueue<TcpClient> _clientQueue = new BlockingQueue<TcpClient>(HandlerCount);
         private Thread _listenerThread;
         private readonly List<Thread> _handlers = new List<Thread>();
@@ -116,7 +116,7 @@ namespace MediaServer.Web
 
         private void ConnectionHandler(TcpClient client)
         {
-			Logger.Instance.Debug("Got Connection");
+			//Logger.Instance.Debug("Got Connection");
             using(var ns = client.GetStream())
             using (var tr = new UnbufferedStreamReader(ns))
             using (var tw = new StreamWriter(ns))
@@ -129,13 +129,13 @@ namespace MediaServer.Web
                 var headers = new Dictionary<string, string>();
 
 				var line = tr.ReadLine();
-				Logger.Instance.Debug("Header = " + line);
+				//Logger.Instance.Debug("Header = " + line);
 				while (!String.IsNullOrEmpty(line))
 				{
 					var match = _requestMatcher.Match(line);
 					if (match.Success)
 					{
-						Logger.Instance.Debug("Found the request line");
+						//Logger.Instance.Debug("Found the request line");
 						cmd = match.Groups[1].Value;
 						uri = new Uri("http://" + client.Client.LocalEndPoint + match.Groups[2].Value, UriKind.Absolute);
 						break;
