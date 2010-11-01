@@ -1,55 +1,21 @@
-So, with the built in http server, every so often the web server would receive a 
-set of headers it didnt seem to like, and it would read them, but then do another read
-which would stall out after 30, and the connection would be closed and I wouldnt
-get to processit.  data stalled out.
+The below notes are old.  New ones up top
 
-Seemed like the only way to fix it was to write my own web server.  Which I did, 
-a simple 1.0 version.  clsoes each connection, etc.  
+work on finishing up the lighttpd integration.  each resource folder needs a
+url mapping to alias correctly.  
 
-First thing I noticed is that on windows, stream.reader.getline doesnt eat more than
-it sould.  on mono, it did.  wrote a unbuffered one that does teh right thing
-one char at at ime.  bit slow, so should do block reading and then undo to the line ending 
-character.  
-
-But, now we have a new problem.
-
-The thing works, but i dont know if its the 1.0 breaking of connections, or buffers sizes, 
-or what it is, but the data with small buffere sizes runs for a few seconds, pauese, then runs some more
-then pauses, etc.  With bigger, we go for longer snippets, but when it gets over the pause, it runs
-in fast forward for a bit, to catch up.  Personally, that sounds like my buffers are too big, on the
-socket.  made a change, but havent tried it yet.
-
-the disk io is the same, so it must be my network io.  maybe the send buffer size, also maybe the
-make and break connections.  Maybe I should figure out how to do a 1.1 thing, and keep the 
-old connections around and retry.  Doesnt seem like that should be it either, since the other
-vrsion always wrote till the other side hung up, and then they made a different request.  saw
-the accepts and everything.  so 1.0 should be ok, just need to figure out the buffers.  also, I wasnt
-closing the sockets, so maybe that was a problem too.  
-
-will ttry soon a test.
+many other fixes needed too.  check itunes/iphoto parsing, 
 
 
-when moved to basement, use fan for bug removal, and monitor and keyboard under towels
+
+
+---
+
 
 on start up, dont initialize right away, sleep fora bit?
 
-get qmultimedia to auto mount.  not with someone logging in
-
-raid array playback.  looses connection, or looses file, or too slow.
-?seeks to blame? why network io faster?
-
-adjusted raid settings, reduced caching.  
-
-SSDP problems were fixed.
-
-make this app only run once.  single instance semaphore somehow.
-
 can I fire up the onlune resources with out firing up 100 threads.  well, 23 or so anyhow
 
-Try reducing the size of the buffer.  or maybe we can maek it adaptable.  based
-on what its usually able to send before its disconnected?
-
-itunes parsing is still way too slow.
+itunes parsing is still way too slow.  And may be broken now
 
 web wrapper creation, especially picasa, no, only picassa, is really slow.
 
@@ -65,9 +31,6 @@ Make the Ajax requests for status generic enough to be used from other
 systems., like a mac and pc configuration app.
 
 Logging engine is in place, but needs to be used more completely and correctly.
-
-Also need to keep and eye on the mime types.  some may be "right", but not what
-ps3 wants. 
 
 and install packages, someday, with include dmono dependancies if needed
 document code.  Write install instructions, and add usage instructiosn to
