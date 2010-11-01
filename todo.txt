@@ -5,7 +5,14 @@ url mapping to alias correctly.
 
 many other fixes needed too.  check itunes/iphoto parsing, 
 
+I wonder.  Make lighttpd handle everything.  Have it fcgi push the stuff over
+to the app.  then the app just does the soap stuff, and all static content comes
+through the lighty interface.
 
+Else, just watch data packet we send out and make sure it uses the mediaport.
+
+get rid of album art icons, and get lighty handle the cached reduce the complexity of the entier
+thing way down.  get rid of hand made webserver, go back to HttpListener.  
 
 
 ---
