@@ -4,7 +4,7 @@
 	<description>A UPNP media server for OSX and PS3</description>
 
 	<property name="nant.settings.currentframework" value="mono-3.5"/>
-	<property name="debug" value="true" overwrite="false"/>
+	<property name="debug" value="false" overwrite="false"/>
 	<property name="build.dir" value="build"/>
 	<property name="src.dir" value="src"/>
 	<property name="server.src.dir" value="${path::combine(src.dir, 'MediaServer')}"/>
