@@ -34,10 +34,10 @@ namespace MediaServer.Configuration
 
 		private Settings()
 		{
-			MovieIcon = "Movie2.png";
-			ImageIcon = "Pictures2.png";
-			MusicIcon = "Music2.png";
-			ServerIcon = "Home2.png";	
+			MovieIcon = "MovieIcon.png";
+			ImageIcon = "ImageIcon.png";
+			MusicIcon = "MusicIcon.png";
+			ServerIcon = "ServerIcon.png";	
 		}
 
 		public static Settings Instance
@@ -139,13 +139,13 @@ namespace MediaServer.Configuration
 		{
 			var iconQuery = from item in configDoc.Descendants("Icons")
 			                let movie = item.Attribute("movie")
-			                let movieName = movie == null ? "Movie2.png" : ((string)movie).Trim()
+			                let movieName = movie == null ? "MovieIcon.png" : ((string)movie).Trim()
 			                let music = item.Attribute("music")
-			                let musicName = movie == null ? "Music2.png" : ((string)music).Trim()
+			                let musicName = movie == null ? "MusicIcon.png" : ((string)music).Trim()
 			                let image = item.Attribute("image")
-			                let imageName = image == null ? "Movie2.png" : ((string)image).Trim()
+			                let imageName = image == null ? "ImageIcon.png" : ((string)image).Trim()
 			                let server = item.Attribute("server")
-			                let serverName = server == null ? "Home2.png" : ((string)server).Trim()
+			                let serverName = server == null ? "ServerIcon.png" : ((string)server).Trim()
 			                select new { Movie = movieName, Music = musicName, Image = imageName, Server = serverName };
 				
 			var icons = iconQuery.FirstOrDefault();

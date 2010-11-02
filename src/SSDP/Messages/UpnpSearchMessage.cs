@@ -55,8 +55,7 @@ namespace SSDP.Messages
 				if (st.StartsWith("upnp")) return SearchType.RootDevice;
 				if (st.StartsWith("uuid")) return SearchType.DeviceId;
 				if (st.Contains(":device:")) return SearchType.DeviceType;
-				if (st.Contains(":service:")) return SearchType.ServiceType;
-				return SearchType.Unknown;
+				return st.Contains(":service:") ? SearchType.ServiceType : SearchType.Unknown;
 			}
 		}
 

@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WIN32</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -102,7 +102,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\MediaServer\Configuration\FlickrConfigElement.cs" />
+    <Compile Include="src\MediaServer\Configuration\FlickrInterestingConfigElement.cs" />
+    <Compile Include="src\MediaServer\Configuration\FlickrLocationConfigElement.cs" />
+    <Compile Include="src\MediaServer\Configuration\FlickrTagsConfigElement.cs" />
+    <Compile Include="src\MediaServer\Configuration\FlickrTextConfigElement.cs" />
+    <Compile Include="src\MediaServer\Configuration\FlickrUserConfigElement.cs" />
     <Compile Include="src\MediaServer\Configuration\PicasaConfigElement.cs" />
+    <Compile Include="src\MediaServer\Configuration\PicasaFeaturedConfigElement.cs" />
+    <Compile Include="src\MediaServer\Configuration\PicasaTagConfigElement.cs" />
+    <Compile Include="src\MediaServer\Configuration\PicasaTextConfigElement.cs" />
+    <Compile Include="src\MediaServer\Configuration\PicasaUserConfigElement.cs" />
     <Compile Include="src\MediaServer\Configuration\Settings.cs" />
     <Compile Include="src\MediaServer\Media\IMediaRepository.cs" />
     <Compile Include="src\MediaServer\Media\MediaRepository.cs" />

@@ -8,8 +8,8 @@ using MediaServer.SSDP;
 using MediaServer.Utility;
 using MediaServer.Web;
 
-#if (!WIN32)
-
+#if (WIN32)
+using System.Threading;
 #endif
 
 namespace MediaServer
@@ -18,7 +18,6 @@ namespace MediaServer
 	{
 		static void Main(string[] args)
 		{
-			
 			var configFileName = "MediaServer/Configuration.xml";
 			string logfileName = null;
 			if (args.Length >= 1)

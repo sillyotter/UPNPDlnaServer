@@ -40,6 +40,7 @@ namespace SSDP.Messages
 		}
 
 		protected string FirstLine { get; set; }
+
 		protected string this[string key]
 		{
 			get
@@ -57,10 +58,8 @@ namespace SSDP.Messages
 			if (data.Contains("M-SEARCH")) return new UpnpSearchMessage(data);
 			if (data.Contains("ssdp:alive")) return new UpnpAnnounceMessage(data);
 			if (data.Contains("ssdp:byebye")) return new UpnpRevokeMessage(data);
-			if (data.Contains("200 OK")) return new UpnpSearchResponse(data);
-			return new UpnpMessage(data);
+			return data.Contains("200 OK") ? new UpnpSearchResponse(data) : new UpnpMessage(data);
 		}
-
 
 	}
 }

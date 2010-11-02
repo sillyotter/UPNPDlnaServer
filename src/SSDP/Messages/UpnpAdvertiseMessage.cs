@@ -50,8 +50,7 @@ namespace SSDP.Messages
 				if (notificationType.StartsWith("upnp")) return NotificationType.RootDevice;
 				if (notificationType.StartsWith("uuid")) return NotificationType.DeviceId;
 				if (notificationType.StartsWith("urn:schemas-upnp-org:device")) return NotificationType.DeviceType;
-				if (notificationType.StartsWith("urn:schemas-upnp-org:service")) return NotificationType.ServiceType;
-				return NotificationType.Unknown;
+				return notificationType.StartsWith("urn:schemas-upnp-org:service") ? NotificationType.ServiceType : NotificationType.Unknown;
 			}
 		}
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -110,10 +111,9 @@ namespace SSDP
 			{
 				using (var client = new UdpClient())
 				{
-					foreach (var msg in msgs)
+					foreach (var data in msgs.Select(msg => Encoding.ASCII.GetBytes(msg.ToString())))
 					{
-						var data = Encoding.ASCII.GetBytes(msg.ToString());
-						client.Send(data, data.Length, _multicastGrounEndPoint);
+					    client.Send(data, data.Length, _multicastGrounEndPoint);
 					}
 				}
 			}
@@ -138,10 +138,9 @@ namespace SSDP
 			{
 				using (var client = new UdpClient())
 				{
-					foreach (var msg in msgs)
+					foreach (var data in msgs.Select(msg => Encoding.ASCII.GetBytes(msg.ToString())))
 					{
-						var data = Encoding.ASCII.GetBytes(msg.ToString());
-						client.Send(data, data.Length, endpoint);
+					    client.Send(data, data.Length, endpoint);
 					}
 				}
 			}
