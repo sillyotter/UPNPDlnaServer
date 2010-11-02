@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Text.RegularExpressions;
-using System.Threading;
 using MediaServer.Configuration;
-using MediaServer.Utility;
 
 namespace MediaServer.Web
 {
@@ -46,10 +42,9 @@ namespace MediaServer.Web
 		{
 			if (_listener == null)
 			{
-				_listener = new HttpListener();
-				_listener.IgnoreWriteExceptions = true;
+				_listener = new HttpListener {IgnoreWriteExceptions = true};
 
-				_listener.Prefixes.Add("http://+:" + Settings.Instance.QueryPort + "/");
+			    _listener.Prefixes.Add("http://+:" + Settings.Instance.QueryPort + "/");
 				_listener.Start();
 
 				_listener.BeginGetContext(ContextHandler, _listener);

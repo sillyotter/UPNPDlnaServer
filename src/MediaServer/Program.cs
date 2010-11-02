@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using MediaServer.Configuration;
 using MediaServer.Media;
 using MediaServer.SSDP;
@@ -11,8 +9,7 @@ using MediaServer.Utility;
 using MediaServer.Web;
 
 #if (!WIN32)
-using Mono.Unix;
-using Mono.Unix.Native;
+
 #endif
 
 namespace MediaServer

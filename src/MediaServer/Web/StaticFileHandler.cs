@@ -1,18 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using MediaServer.Configuration;
-using MediaServer.Media;
-using MediaServer.Utility;
 
 namespace MediaServer.Web
 {
 	class StaticFileHandler : BaseRequestHandler
 	{
-		private string _ddtxt;
-		private string _cmtxt;
-		private string _cctxt;
+		private readonly string _ddtxt;
+		private readonly string _cmtxt;
+		private readonly string _cctxt;
 
 		public StaticFileHandler()
 		{

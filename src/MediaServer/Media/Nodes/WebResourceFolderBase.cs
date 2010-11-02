@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using MediaServer.Utility;
 
 namespace MediaServer.Media.Nodes
 {
@@ -30,15 +29,7 @@ namespace MediaServer.Media.Nodes
 				}
 				Clear();
 
-				try
-				{
-					FetchImageInformation();
-				}
-				catch (Exception)
-				{
-					//Logger.Instance.Exception(ex);
-					throw;
-				}
+				FetchImageInformation();
 			}
 		}
 

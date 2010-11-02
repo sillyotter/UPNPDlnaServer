@@ -53,28 +53,30 @@ namespace MediaServer.Web
 
 					if (item.IsOut)
 					{
-						if (item.ParameterType.GetElementType() == typeof(string))
-							parameters.Add(String.Empty);
-						else
-							parameters.Add(Activator.CreateInstance(item.ParameterType.GetElementType()));
+					    parameters.Add(item.ParameterType.GetElementType() == typeof (string)
+					                       ? String.Empty
+					                       : Activator.CreateInstance(item.ParameterType.GetElementType()));
 					}
 					else
 					{
-						var val = invokeData.Descendants(u + methodName).Elements(name).FirstOrDefault().Value;
-						if (item.ParameterType == typeof(string))
-						{
-							parameters.Add(val);
-						}
-						else if (item.ParameterType.IsPrimitive)
-						{
-							var data = Convert.ChangeType(val, item.ParameterType);
-							parameters.Add(data);
-						}
-						else if (item.ParameterType.IsEnum)
-						{
-							var data = Enum.Parse(item.ParameterType, val);
-							parameters.Add(data);
-						}
+					    if (invokeData != null)
+					    {
+					        var val = invokeData.Descendants(u + methodName).Elements(name).FirstOrDefault().Value;
+					        if (item.ParameterType == typeof(string))
+					        {
+					            parameters.Add(val);
+					        }
+					        else if (item.ParameterType.IsPrimitive)
+					        {
+					            var data = Convert.ChangeType(val, item.ParameterType);
+					            parameters.Add(data);
+					        }
+					        else if (item.ParameterType.IsEnum)
+					        {
+					            var data = Enum.Parse(item.ParameterType, val);
+					            parameters.Add(data);
+					        }
+					    }
 					}
 				}
 			}

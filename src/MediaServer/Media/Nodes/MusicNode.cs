@@ -34,14 +34,11 @@ namespace MediaServer.Media.Nodes
 
 	    public override Uri GetIconUrl(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 	    {
-			if (AlbumArt != null)
+	        if (AlbumArt != null)
 			{
 				return new Uri(String.Format("http://{0}/MediaServer/GetMusicImage?id={1}", queryEndpoint, Id));
 			}
-			else
-			{
-				return new Uri(String.Format("http://" + mediaEndpoint + "/MediaServer/" + Settings.Instance.MusicIcon));
-			}
+	        return new Uri(String.Format("http://" + mediaEndpoint + "/MediaServer/" + Settings.Instance.MusicIcon));
 	    }
 
 	    #endregion

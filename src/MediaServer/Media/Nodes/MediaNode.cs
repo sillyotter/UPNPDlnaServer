@@ -15,15 +15,7 @@ namespace MediaServer.Media.Nodes
 		//static long _count = 0;
 		protected MediaNode(FolderNode parentNode)
 		{
-			if (parentNode == null)
-			{
-				Id = Guid.Empty;
-			}
-			else
-			{
-				// var count = Interlocked.Increment(ref _count);
-				Id = Guid.NewGuid(); // new Guid(String.Format("00000000-0000-0000-0000-{0:000000000000}", count));
-			}
+			Id = parentNode == null ? Guid.Empty : Guid.NewGuid();
 
 			Parent = parentNode;
 			MediaRepository.Instance.AddNodeToIndex(this);
