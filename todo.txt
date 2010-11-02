@@ -14,6 +14,8 @@ Else, just watch data packet we send out and make sure it uses the mediaport.
 get rid of album art icons, and get lighty handle the cached reduce the complexity of the entier
 thing way down.  get rid of hand made webserver, go back to HttpListener.  
 
+The crash I had on the big box was while fetching movie icons and it was "too many files open"
+All of that can be fixed I think by letting lighttpd handle it.
 
 ---
 
