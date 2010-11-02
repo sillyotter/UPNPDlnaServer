@@ -91,12 +91,12 @@ namespace MediaServer.Media.Nodes
 
 	    public override Uri GetRequestUrl(IPEndPoint baseAddress)
 	    {
-	        return new Uri(string.Format("http://{0}/MediaServer/GetMedia?id={1}", baseAddress, Id));
+	        return new Uri(string.Format("http://{0}/{1}", baseAddress, Location));
 	    }
 
-	    public override XElement RenderMetadata(IPEndPoint endpoint)
+	    public override XElement RenderMetadata(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 		{
-			var results = base.RenderMetadata(endpoint);
+			var results = base.RenderMetadata(queryEndpoint, mediaEndpoint);
 			if (results != null)
 			{
 				results.Add(new XElement(Dc + "date", ModifiedTime.ToString("s")));

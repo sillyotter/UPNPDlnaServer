@@ -3,7 +3,7 @@
 	<Network>
 		<Port>12345</Port>
 	</Network>
-	<Storage staticPath="MediaServer/Resources/">
+	<Storage>
 		<Media>
 			<Dir name="My Movies">/Volumes/Storage/Media/Movies/</Dir>
 			<iTunes name="Guy's Music">/Volumes/Storage/Media/GuysiTunes/iTunes Library.xml</iTunes>

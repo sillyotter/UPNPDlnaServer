@@ -23,9 +23,9 @@ namespace MediaServer.Media.Nodes
 
 		#region Overrides of FileNode
 
-	    public override Uri GetIconUrl(IPEndPoint baseAddr)
+	    public override Uri GetIconUrl(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 	    {
-	        return new Uri(String.Format("http://{0}/MediaServer/" + Settings.Instance.MovieIcon, baseAddr));
+	        return new Uri(String.Format("http://{0}/MediaServer/" + Settings.Instance.MovieIcon, mediaEndpoint));
 	    }
 
 	    #endregion
@@ -33,9 +33,9 @@ namespace MediaServer.Media.Nodes
 		public uint? Width { get; internal set; }
 		public uint? Height { get; internal set; }
 		
-		public override XElement RenderMetadata(IPEndPoint endpoint)
+		public override XElement RenderMetadata(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 		{
-			var results = base.RenderMetadata(endpoint);
+			var results = base.RenderMetadata(queryEndpoint, mediaEndpoint);
 			var res = results.Element(Didl + "res");
 			if (res != null)
 			{

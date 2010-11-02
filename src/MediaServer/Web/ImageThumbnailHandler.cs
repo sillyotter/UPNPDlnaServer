@@ -12,30 +12,28 @@ namespace MediaServer.Web
 	{		
 		private const int BufferSize = 64 * 1024;
 
-        public override void ProcessRequest(EndPoint localEndPoint, EndPoint remoteEndpoint, string method, Uri requestUri,
-            IDictionary<string, string> headers, UnbufferedStreamReader inputStream, StreamWriter outputStream)
+        public override void ProcessRequest(HttpListenerRequest req, HttpListenerResponse resp)
         {			
-			var id = requestUri.Query.Split('=')[1];
+			var id = req.Url.Query.Split('=')[1];
 			var node = MediaRepository.Instance.GetNodeForId(new Guid(id)) as ImageNode;
 
             if (node == null || String.IsNullOrEmpty(node.Thumbnail) || !File.Exists(node.Thumbnail))
             {
-                Redirect(outputStream,
-                         new Uri("http://" + localEndPoint + "/MediaServer/" + Settings.Instance.MusicIcon));
+                resp.Redirect("http://" + req.LocalEndPoint + "/MediaServer/" + HttpUtility.UrlPathEncode(Settings.Instance.ImageIcon));
+				resp.OutputStream.Close();
                 return;
             }
 
             var requestedFile = node.Thumbnail;
 			var fileInfo = new FileInfo(requestedFile);
 
-            outputStream.WriteLine("HTTP/1.0 200 OK");
-            outputStream.WriteLine("Server: " + Settings.Instance.ServerName);
-            outputStream.WriteLine("Content-Length: " + fileInfo.Length);
-            outputStream.WriteLine("Content-Type: " + node.MimeType);
-            outputStream.WriteLine("Date: " + DateTime.Now.ToUniversalTime().ToString("R"));
-            outputStream.WriteLine();
+			resp.StatusCode = (int)HttpStatusCode.OK;
+			resp.ContentLength64 = fileInfo.Length;
+			resp.ContentType = node.MimeType;
+            resp.Headers.Add("Server", Settings.Instance.ServerName);
+            resp.Headers.Add("Date", DateTime.Now.ToUniversalTime().ToString("R"));
 						
-			if (method == "HEAD") return;
+			if (req.HttpMethod == "HEAD") return;
 
 			var buf = new byte[BufferSize];
 
@@ -49,11 +47,15 @@ namespace MediaServer.Web
 					{
 						var rc = fs.Read(buf, 0, BufferSize);
 						if (rc == 0) break;
-						outputStream.BaseStream.Write(buf, 0, rc);
+						resp.OutputStream.Write(buf, 0, rc);
 					} while (true);
 				}
 				catch (Exception)
 				{
+				}
+				finally
+				{
+					resp.OutputStream.Close();
 				}
 			}
 		

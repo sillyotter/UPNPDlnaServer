@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading;
 using MediaServer.Media;
 using MediaServer.Utility;
+using MediaServer.Configuration;
 
 namespace MediaServer.Web
 {
@@ -43,18 +44,19 @@ namespace MediaServer.Web
 			[SoapParameter("UpdateID")] out uint updateId)
 		{
 			var localData = Thread.GetNamedDataSlot("localEndPoint");
-			var endpoint = Thread.GetData(localData) as IPEndPoint;
+			var queryEndpoint = Thread.GetData(localData) as IPEndPoint;
+			var mediaEndpoint = new IPEndPoint(queryEndpoint.Address, Settings.Instance.MediaPort);
 
 			switch (browseFlag)
 			{
 				case "BrowseMetadata":
 					MediaRepository.Instance.BrowseMetadata(objectId, filter, startingIndex, requestedCount, sortCriteria, out result,
-					                                        out numberReturned, out totalMatches, out updateId, endpoint);
+					                                        out numberReturned, out totalMatches, out updateId, queryEndpoint, mediaEndpoint);
 					break;
 				case "BrowseDirectChildren":
 					MediaRepository.Instance.BrowseDirectChildren(objectId, filter, startingIndex, requestedCount, sortCriteria,
 					                                              out result, out numberReturned, out totalMatches, out updateId, 
-																  endpoint);
+																  queryEndpoint, mediaEndpoint);
 					break;
 				default:
 					result = "";

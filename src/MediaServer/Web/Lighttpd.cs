@@ -34,6 +34,7 @@ namespace MediaServer.Web
 			_proc = null;
 		}
 
+		public string DocRoot { get; set; }
 		public int Port { get; set; }
 		public IDictionary<string,string> UrlMapping { get; private set;}
 
@@ -55,6 +56,7 @@ namespace MediaServer.Web
 				asb.AppendFormat("alias.url += ( \"{0}\" => \"{1}\" )", item.Key, item.Value ).AppendLine();
 			}
 
+			tmplText = tmplText.Replace("{{docroot}}", DocRoot);
 			tmplText = tmplText.Replace("{{port}}", Port.ToString());
 			tmplText = tmplText.Replace("{{mimetypes}}", msb.ToString());
 			tmplText = tmplText.Replace("{{aliases}}", asb.ToString());

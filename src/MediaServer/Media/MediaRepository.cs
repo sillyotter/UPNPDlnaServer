@@ -201,7 +201,7 @@ namespace MediaServer.Media
 
 		public void BrowseMetadata(string objectId, string filter, uint startingIndex,
 			uint requestedCount, string sortCriteria, out string result, out uint numberReturned,
-			out uint totalMatches, out uint updateId, IPEndPoint endpoint)
+			out uint totalMatches, out uint updateId, IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 		{
 			result = "";
 			numberReturned = 0;
@@ -221,7 +221,7 @@ namespace MediaServer.Media
 						Didl + "DIDL-Lite",
 						new XAttribute(XNamespace.Xmlns + "dc", Dc.ToString()),
 						new XAttribute(XNamespace.Xmlns + "upnp", Upnp.ToString()),
-						folder.RenderMetadata(endpoint));
+						folder.RenderMetadata(queryEndpoint, mediaEndpoint));
 
 				result = findings.ToString();
 			
@@ -233,7 +233,7 @@ namespace MediaServer.Media
 
 		public void BrowseDirectChildren(string objectId, string filter, uint startingIndex, 
 			uint requestedCount, string sortCriteria, out string result, out uint numberReturned, 
-			out uint totalMatches, out uint updateId, IPEndPoint endpoint)
+			out uint totalMatches, out uint updateId, IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 		{
 			result = "";
 			numberReturned = 0;
@@ -254,7 +254,7 @@ namespace MediaServer.Media
 						Didl + "DIDL-Lite",
 						new XAttribute(XNamespace.Xmlns + "dc", Dc.ToString()),
 						new XAttribute(XNamespace.Xmlns + "upnp", Upnp.ToString()),
-						folder.RenderDirectChildren(startingIndex, requestedCount, endpoint)
+						folder.RenderDirectChildren(startingIndex, requestedCount, queryEndpoint, mediaEndpoint)
 						);
 
 				result = findings.ToString();

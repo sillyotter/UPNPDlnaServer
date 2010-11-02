@@ -106,18 +106,17 @@ namespace MediaServer.Web
 			return null;
 		}
 
-        public override void ProcessRequest(EndPoint localEndPoint, EndPoint remoteEndpoint, string method, Uri requestUri, 
-            IDictionary<string, string> headers, UnbufferedStreamReader inputStream, StreamWriter outputStream)
+        public override void ProcessRequest(HttpListenerRequest req, HttpListenerResponse resp)
         {
-			if (method.ToUpper() == "POST")
+			if (req.HttpMethod.ToUpper() == "POST")
 			{
-				var action = headers["SOAPACTION"];
+				var action = req.Headers["SOAPACTION"];
 				if (!String.IsNullOrEmpty(action))
 				{
-				    var inputLength = int.Parse(headers["Content-Length"]);
+				    var inputLength = (int)req.ContentLength64;
 				    var buffer = new byte[inputLength];
                     
-				    inputStream.BaseStream.Read(buffer, 0, inputLength);
+				    req.InputStream.Read(buffer, 0, inputLength);
 
 				    XElement postData;
                     using (var ms = new MemoryStream(buffer))
@@ -126,7 +125,7 @@ namespace MediaServer.Web
                     }
 
 				    var localData = Thread.GetNamedDataSlot("localEndPoint");
-					Thread.SetData(localData, localEndPoint);
+					Thread.SetData(localData, req.LocalEndPoint);
 
 					var result = InvokeMethod(action, postData);
 
@@ -141,20 +140,21 @@ namespace MediaServer.Web
 							var len = s.Length;
 							var data = s.GetBuffer();
 
-                            outputStream.WriteLine("HTTP/1.0 200 OK");
-                            outputStream.WriteLine("Server: " + Settings.Instance.ServerName);
-                            outputStream.WriteLine("Content-Length: " + len);
-                            outputStream.WriteLine("Content-Type: text/xml");
-                            outputStream.WriteLine("Date: " + DateTime.Now.ToUniversalTime().ToString("R"));		
-                            outputStream.WriteLine("EXT: ");
-						    outputStream.WriteLine();
-							outputStream.BaseStream.Write(data, 0, (int)len);
+							resp.StatusCode = (int)HttpStatusCode.OK;
+							resp.ContentLength64 = len;
+							resp.ContentType = "text/xml";
+                            resp.Headers.Add("Server", Settings.Instance.ServerName);
+                            resp.Headers.Add("Date", DateTime.Now.ToUniversalTime().ToString("R"));		
+                            resp.Headers.Add("EXT", "");
+
+							resp.OutputStream.Write(data, 0, (int)len);
+							resp.OutputStream.Close();
 						}
 						return;
 					}
 				}
 			}
-            NotFound(outputStream);
+            resp.StatusCode = (int)HttpStatusCode.NotFound;
 		}
 	}
 }

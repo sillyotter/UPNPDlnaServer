@@ -16,7 +16,7 @@
         <width>256</width>
         <height>256</height>
         <depth>32</depth>
-        <url>/MediaServer/ThisIsNotARealIcon.png</url>
+        <url>/MediaServer/ServerIcon.png</url>
       </icon>
     </iconList>
     <serviceList>

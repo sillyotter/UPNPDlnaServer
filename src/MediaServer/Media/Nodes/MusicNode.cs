@@ -1,7 +1,9 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Linq;
 using System.Xml.Linq;
+using MediaServer.Configuration;
 
 namespace MediaServer.Media.Nodes
 {
@@ -11,6 +13,8 @@ namespace MediaServer.Media.Nodes
 		private string _artist;
 		private string _album;
 		private string _genre;
+		private TagLib.IPicture _art;
+		private bool _artcheck;
 
 		public MusicNode(FolderNode parentNode, string title,  string location) 
 			: base(parentNode, title, location)
@@ -28,13 +32,37 @@ namespace MediaServer.Media.Nodes
 
 		#region Overrides of FileNode
 
-	    public override Uri GetIconUrl(IPEndPoint baseAddr)
+	    public override Uri GetIconUrl(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 	    {
-	        return new Uri(String.Format("http://{0}/MediaServer/GetMusicImage?id={1}", baseAddr, Id));
+			if (AlbumArt != null)
+			{
+				return new Uri(String.Format("http://{0}/MediaServer/GetMusicImage?id={1}", queryEndpoint, Id));
+			}
+			else
+			{
+				return new Uri(String.Format("http://" + mediaEndpoint + "/MediaServer/" + Settings.Instance.MusicIcon));
+			}
 	    }
 
 	    #endregion
 		
+		public TagLib.IPicture AlbumArt 
+		{
+			get
+			{
+				if (_art == null && _artcheck == false)
+				{
+					var tagfile = TagLib.File.Create(Location);
+					var img = tagfile.Tag.Pictures.FirstOrDefault();
+					if (img != null)
+					{
+						_art = img;
+					}
+					_artcheck = true;
+				}	
+				return _art;
+			}
+		}
 		public override string Title
 		{
 			get
@@ -108,9 +136,9 @@ namespace MediaServer.Media.Nodes
 		
 		public uint? SampleFrequencyHz { get; internal set; }
 		
-		public override XElement RenderMetadata(IPEndPoint endpoint)
+		public override XElement RenderMetadata(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 		{
-			var results = base.RenderMetadata(endpoint);
+			var results = base.RenderMetadata(queryEndpoint, mediaEndpoint);
 			if (!String.IsNullOrEmpty(Artist)) results.Add(new XElement(Upnp + "artist", Artist));
 			if (!String.IsNullOrEmpty(Album)) results.Add(new XElement(Upnp + "album", Album));
 			if (!String.IsNullOrEmpty(Genre)) results.Add(new XElement(Upnp + "genre", Genre));

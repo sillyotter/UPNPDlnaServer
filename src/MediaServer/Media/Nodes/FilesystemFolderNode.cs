@@ -79,7 +79,7 @@ namespace MediaServer.Media.Nodes
 			AddRange(dirs.Cast<MediaNode>().Concat(mediaFiles.Cast<MediaNode>()).ToList());
 		}
 
-		public override XElement RenderMetadata(IPEndPoint endpoint)
+		public override XElement RenderMetadata(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 		{
 			lock(this)
 			{
@@ -88,7 +88,7 @@ namespace MediaServer.Media.Nodes
 					_hasBeenScanned = true;
 				    ScanFilesystem();
 				}
-				return base.RenderMetadata(endpoint);
+				return base.RenderMetadata(queryEndpoint, mediaEndpoint);
 			}
 		}
 	}

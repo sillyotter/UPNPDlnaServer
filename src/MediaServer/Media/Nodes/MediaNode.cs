@@ -41,8 +41,8 @@ namespace MediaServer.Media.Nodes
 		public abstract string Title { get; }
 		public abstract string Class { get; }
 
-		public abstract XElement RenderMetadata(IPEndPoint endpoint);
-		public abstract IEnumerable<XElement> RenderDirectChildren(uint startingIndex, uint requestedCount, IPEndPoint endpoint);
+		public abstract XElement RenderMetadata(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint);
+		public abstract IEnumerable<XElement> RenderDirectChildren(uint startingIndex, uint requestedCount, IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint);
 
 		public virtual void RemoveFromIndexes()
 		{

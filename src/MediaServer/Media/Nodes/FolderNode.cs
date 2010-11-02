@@ -114,7 +114,7 @@ namespace MediaServer.Media.Nodes
 			return Id == Guid.Empty ? "-1" : (ParentId == Guid.Empty ? "0" : ParentId.ToString());
 		}
 
-		public override XElement RenderMetadata(IPEndPoint endpoint)
+		public override XElement RenderMetadata(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 		{
 			_readerWriterLock.EnterReadLock();
 			try
@@ -135,7 +135,7 @@ namespace MediaServer.Media.Nodes
 			}
 		}
 
-		public override IEnumerable<XElement> RenderDirectChildren(uint startingIndex, uint requestedCount, IPEndPoint endpoint)
+		public override IEnumerable<XElement> RenderDirectChildren(uint startingIndex, uint requestedCount, IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 		{
 			_readerWriterLock.EnterReadLock();
 			try
@@ -144,7 +144,7 @@ namespace MediaServer.Media.Nodes
 				var stop = Math.Min(_children.Count, (int)(startingIndex + requestedCount));
 				for(var i = start; i < stop; ++i)
 				{
-					yield return _children[i].RenderMetadata(endpoint);
+					yield return _children[i].RenderMetadata(queryEndpoint, mediaEndpoint);
 				}
 			}
 			finally

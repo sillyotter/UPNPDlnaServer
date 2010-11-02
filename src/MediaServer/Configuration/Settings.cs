@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -79,7 +80,6 @@ namespace MediaServer.Configuration
 			var configDoc = XDocument.Load(filename);
 
 			LoadPortSettings(configDoc);
-			LoadStaticResourceSettings(configDoc);
 			LoadMediaFolders(configDoc);
 			LoadiTunesFiles(configDoc);
 			LoadiPhotoFiles(configDoc);
@@ -291,18 +291,6 @@ namespace MediaServer.Configuration
 			}
 		}
 
-		
-		private void LoadStaticResourceSettings(XContainer configDoc)
-		{
-			var resourceQuery = from item in configDoc.Descendants("Storage")
-			                    let stat = item.Attribute("staticPath")
-			                    where stat != null
-			                    select (string)stat;
-
-			var storage = resourceQuery.FirstOrDefault();
-			StaticResources = String.IsNullOrEmpty(storage) ? "UPNP/Resources" : storage;
-		}
-
 		private void LoadPortSettings(XContainer configDoc)
 		{
 			var portQuery =
@@ -330,7 +318,14 @@ namespace MediaServer.Configuration
 		public Guid DeviceId { get; private set; }
 		public int QueryPort { get; private set; }
 		public int MediaPort { get; private set; }
-		public string StaticResources { get; private set; }
+		public string StaticResources 
+		{
+	 		get
+			{
+				return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "MediaServer/Resources/");
+			}
+		}		
+
 		public string MovieIcon { get; private set; }
 		public string ImageIcon { get; private set; }
 		public string MusicIcon { get; private set; }

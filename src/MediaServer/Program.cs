@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using MediaServer.Configuration;
 using MediaServer.Media;
@@ -41,12 +42,11 @@ namespace MediaServer
 				Logger.Instance.LogLogLevel = LogLevel.Debug;
 			}
 
-			//Logger.Instance.Info("Starting");			
-			
 			Settings.Instance.LoadConfigurationFile(configFileName);
 
 			var lighttpd = Lighttpd.Instance;
 			lighttpd.Port = Settings.Instance.MediaPort;
+			lighttpd.DocRoot = Settings.Instance.StaticResources;
 
 			var itunesQuery = from item in Settings.Instance.iTunesFolders
 				select new KeyValuePair<string,string>(item.Key, Path.GetDirectoryName(item.Value));

@@ -14,9 +14,9 @@ namespace MediaServer.Media.Nodes
 		public uint? Bitrate { get; set; }
 		public TimeSpan? Duration { get; set; }
 
-		public override XElement RenderMetadata(IPEndPoint endpoint)
+		public override XElement RenderMetadata(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 		{
-			var results = base.RenderMetadata(endpoint);
+			var results = base.RenderMetadata(queryEndpoint, mediaEndpoint);
 			
 			var res = results.Element(Didl + "res");
 			if (res != null)

@@ -18,7 +18,8 @@ namespace MediaServer.Media
             out uint numberReturned, 
             out uint totalMatches, 
             out uint updateId, 
-            IPEndPoint endpoint);
+            IPEndPoint queryEndpoint,
+			IPEndPoint mediaEndpoint);
 
 	    void BrowseDirectChildren(
 	        string objectId,
@@ -30,7 +31,8 @@ namespace MediaServer.Media
 	        out uint numberReturned,
 	        out uint totalMatches,
 	        out uint updateId,
-	        IPEndPoint endpoint);
+	        IPEndPoint queryEndpoint,
+			IPEndPoint mediaEndpoint);
 
 		ResourceNode GetNodeForId(Guid id);
 	}

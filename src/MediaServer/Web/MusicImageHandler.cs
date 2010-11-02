@@ -11,61 +11,38 @@ namespace MediaServer.Web
 {
 	class MusicImageHandler : BaseRequestHandler
 	{
-		private static TagLib.IPicture LoadPictureFromImage(string requestedFile)
-		{				
-			if (!File.Exists(requestedFile))
-			{
-				return null;
-			}
-			
-			try
-			{
-				var tagfile = TagLib.File.Create(requestedFile);
-				var img = tagfile.Tag.Pictures.FirstOrDefault();
-				return img;
-			}
-			catch (Exception)
-			{
-				return null;
-			}
-		}
-
-        public override void ProcessRequest(EndPoint localEndPoint, EndPoint remoteEndpoint, string method, Uri requestUri,
-            IDictionary<string, string> headers, UnbufferedStreamReader inputStream, StreamWriter outputStream)
+        public override void ProcessRequest(HttpListenerRequest req, HttpListenerResponse resp)
 		{			
-			var id = requestUri.Query.Split('=')[1];
+			var id = req.Url.Query.Split('=')[1];
 			var node = MediaRepository.Instance.GetNodeForId(new Guid(id)) as MusicNode;
+			var mep = new IPEndPoint(req.LocalEndPoint.Address, Settings.Instance.MediaPort);
+
 			if (node == null)
 			{
-			    Redirect(outputStream, new Uri("http://" + localEndPoint + "/MediaServer/" + Settings.Instance.MusicIcon));
+			    resp.RedirectLocation = ("http://" + mep + "/MediaServer/" + HttpUtility.UrlPathEncode(Settings.Instance.MusicIcon));
+				resp.StatusCode = (int)HttpStatusCode.MovedPermanently;
+				resp.OutputStream.Close();
 			   	return;	
 			}
 			
-			var requestedFile = node.Location;
-			var img = LoadPictureFromImage(requestedFile);
-			
-			if (img == null)
-			{
-			    Redirect(outputStream, new Uri("http://" + localEndPoint + "/MediaServer/" + Settings.Instance.MusicIcon));
-                return;
-			}
-		
+			var img = node.AlbumArt;
 			var mt = img.MimeType;
 			var dt = img.Data;
 		
-            outputStream.WriteLine("HTTP/1.0 200 OK");
-            outputStream.WriteLine("Server: " + Settings.Instance.ServerName);
-            outputStream.WriteLine("Content-Length: " + dt.Count());
-            outputStream.WriteLine("Content-Type: " + mt);
-            outputStream.WriteLine("Date: " + DateTime.Now.ToUniversalTime().ToString("R"));
-            outputStream.WriteLine();
+			resp.StatusCode = (int)HttpStatusCode.OK;
+			resp.ContentLength64 = dt.Count();
+			resp.ContentType = mt;
 
-			if (method == "HEAD") return;
+            resp.Headers.Add("Server", Settings.Instance.ServerName);
+            resp.Headers.Add("Date", DateTime.Now.ToUniversalTime().ToString("R"));
+
+			if (req.HttpMethod == "HEAD") return;
 
 			try
 			{
 				var rawData = dt.ToArray();
-				outputStream.BaseStream.Write(rawData, 0, rawData.Length);
+				resp.OutputStream.Write(rawData, 0, rawData.Length);
+				resp.OutputStream.Close();
 			}
 			catch(Exception)
 			{

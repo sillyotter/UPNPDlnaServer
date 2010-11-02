@@ -11,14 +11,14 @@ namespace MediaServer.Media.Nodes
 		{
 		}
 
-	    public abstract Uri GetRequestUrl(IPEndPoint baseAddress);
-	    public abstract Uri GetIconUrl(IPEndPoint baseAddr);
+	    public abstract Uri GetRequestUrl(IPEndPoint endpoint);
+	    public abstract Uri GetIconUrl(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint);
 	    public abstract string MimeType { get; }
 		public abstract ulong Size { get; }
 
 		#region Overrides of MediaNode
 
-		public override XElement RenderMetadata(IPEndPoint endpoint)
+		public override XElement RenderMetadata(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 		{
 			return
 				new XElement(
@@ -33,16 +33,16 @@ namespace MediaServer.Media.Nodes
 						Upnp + "albumArtURI",
 						new XAttribute(XNamespace.Xmlns + "dlna", Dlna.ToString()),
 						new XAttribute(Dlna + "profileID", "PNG_TN"),
-						new XText(GetIconUrl(endpoint).ToString())),
+						new XText(HttpUtility.UrlPathEncode(GetIconUrl(queryEndpoint, mediaEndpoint).ToString()))),
 					new XElement(
 						Didl + "res",
 						new XAttribute("protocolInfo", "http-get:*:" + MimeType + ":*"),
 						new XAttribute("size", Size),
-						new XText(GetRequestUrl(endpoint).ToString()))
+						new XText(HttpUtility.UrlPathEncode(GetRequestUrl(mediaEndpoint).ToString())))
 					);
 		}
 
-		public override IEnumerable<XElement> RenderDirectChildren(uint startingIndex, uint requestedCount, IPEndPoint endpoint)
+		public override IEnumerable<XElement> RenderDirectChildren(uint startingIndex, uint requestedCount, IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 		{
 			return new XElement[0];
 		}

@@ -13,19 +13,17 @@ namespace MediaServer.Web
 {
 	internal class MediaHandler : BaseRequestHandler
 	{
-		#region Implementation of BaseRequestHandler
-
-        public override void ProcessRequest(EndPoint localEndPoint, EndPoint remoteEndpoint, string method, Uri requestUri,
-            IDictionary<string, string> headers, UnbufferedStreamReader inputStream, StreamWriter outputStream)
+        public override void ProcessRequest(HttpListenerRequest req, HttpListenerResponse resp)
         {
-			var strId = requestUri.Query.Split('=')[1];
+			var strId = req.Url.Query.Split('=')[1];
 			var node = MediaRepository.Instance.GetNodeForId(new Guid(strId)) as FileNode;
 			var requestedFile = node != null ? node.Location : "";
 
-			var location = "http://" + localEndPoint.ToString().Split(':')[0] + ":" + Settings.Instance.MediaPort + requestedFile;
-			Redirect(outputStream, new Uri(location));
-		}
+			var location = "http://" + req.LocalEndPoint.Address + ":" + Settings.Instance.MediaPort + HttpUtility.UrlPathEncode(requestedFile);
 
-		#endregion
+			resp.RedirectLocation = location;
+			resp.StatusCode = (int)HttpStatusCode.MovedPermanently;
+			resp.OutputStream.Close();
+		}
 	}
 }

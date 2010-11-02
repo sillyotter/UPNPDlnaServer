@@ -22,9 +22,9 @@ namespace MediaServer.Media.Nodes
 
 		#region Overrides of FileNode
 
-	    public override Uri GetIconUrl(IPEndPoint baseAddr)
+	    public override Uri GetIconUrl(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 	    {
-	        return new Uri(String.Format("http://{0}/MediaServer/GetImageThumbnail?id={1}", baseAddr, Id));
+	        return new Uri(String.Format("http://{0}/{1}", mediaEndpoint, HttpUtility.UrlPathEncode(Thumbnail)));
 	    }
 
 	    #endregion
@@ -34,9 +34,9 @@ namespace MediaServer.Media.Nodes
 		public uint? Height { get; internal set; }
 		public uint? ColorDepth { get; internal set; }
 		
-		public override XElement RenderMetadata(IPEndPoint endpoint)
+		public override XElement RenderMetadata(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 		{
-			var results = base.RenderMetadata(endpoint);
+			var results = base.RenderMetadata(queryEndpoint, mediaEndpoint);
 			var res = results.Element(Didl + "res");
 			if (res != null)
 			{

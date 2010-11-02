@@ -49,7 +49,7 @@ namespace MediaServer.Media.Nodes
 	        return _targetUri;
 	    }
 
-	    public override Uri GetIconUrl(IPEndPoint baseAddr)
+	    public override Uri GetIconUrl(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)
 	    {
 	        return _thumbnailUri;
 	    }
