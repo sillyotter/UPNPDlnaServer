@@ -14,8 +14,7 @@ namespace MediaServer.Web
 
 		#region Singleton
 		private static readonly Lighttpd SingletonInstance = new Lighttpd();
-		// I dont like the default root dir = /tmp thing.  need to point it off at something non existing, or maybe use it to serve out our 
-		// static files,so maybe stick that dir in the config file below.
+
 		public static Lighttpd Instance
 		{
 			get

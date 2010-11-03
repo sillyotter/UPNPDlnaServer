@@ -23,8 +23,7 @@ namespace MediaServer.Web
 			{
 				var attributes = method.GetCustomAttributes(typeof(SoapActionAttribute), true).Cast<SoapActionAttribute>();
 				var attr = attributes.FirstOrDefault();
-				if (attr != null)
-					_soapActions.Add(attr.Action, method);
+				if (attr != null) _soapActions.Add(attr.Action, method);
 			}
 		}
 
@@ -128,10 +127,9 @@ namespace MediaServer.Web
 
 				    var localData = Thread.GetNamedDataSlot("localEndPoint");
 					Thread.SetData(localData, req.LocalEndPoint);
-
 					var result = InvokeMethod(action, postData);
-
 					Thread.FreeNamedDataSlot("localEndPoint");
+
 					if (result != null)
 					{
 						var doc = new XDocument(new XDeclaration("1.0", "utf-8", "yes"), result);

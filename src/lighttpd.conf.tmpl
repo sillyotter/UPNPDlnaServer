@@ -5,11 +5,13 @@ server.document-root = "{{docroot}}"
 server.username = "nobody"
 server.groupname = "nogroup"
 server.force-lowercase-filenames = "disable"
-server.max-keep-alive-requests = 0
+#server.max-keep-alive-requests = 0
+server.event-handler = "kqueue"
+server.network-backend = "writev"
 
 server.modules = ( "mod_alias", "mod_expire" )
 
-connection.kbytes-per-second = 4096
+#connection.kbytes-per-second = 4096
 dir-listing.activate = "disable"
 index-file.names = ( "index.html", "index.htm" )
 expire.url = ( "" => "access plus 1 days" )

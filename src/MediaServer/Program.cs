@@ -10,6 +10,9 @@ using MediaServer.Web;
 
 #if (WIN32)
 using System.Threading;
+#else
+using Mono.Unix;
+using Mono.Unix.Native;
 #endif
 
 namespace MediaServer

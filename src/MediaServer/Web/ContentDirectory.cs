@@ -42,8 +42,14 @@ namespace MediaServer.Web
 			[SoapParameter("TotalMatches")] out uint totalMatches,
 			[SoapParameter("UpdateID")] out uint updateId)
 		{
+			result = "";
+			numberReturned = 0;
+			totalMatches = 0;
+			updateId = 0;
+
 			var localData = Thread.GetNamedDataSlot("localEndPoint");
 			var queryEndpoint = Thread.GetData(localData) as IPEndPoint;
+
 		    if (queryEndpoint != null)
 		    {
 		        var mediaEndpoint = new IPEndPoint(queryEndpoint.Address, Settings.Instance.MediaPort);
@@ -58,12 +64,6 @@ namespace MediaServer.Web
 		                MediaRepository.Instance.BrowseDirectChildren(objectId, filter, startingIndex, requestedCount, sortCriteria,
 		                                                              out result, out numberReturned, out totalMatches, out updateId, 
 		                                                              queryEndpoint, mediaEndpoint);
-		                break;
-		            default:
-		                result = "";
-		                numberReturned = 0;
-		                totalMatches = 0;
-		                updateId = 0;
 		                break;
 
 		        }
