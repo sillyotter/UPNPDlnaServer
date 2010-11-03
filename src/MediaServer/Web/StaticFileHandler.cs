@@ -46,7 +46,6 @@ namespace MediaServer.Web
 			else
 			{
 				resp.RedirectLocation = "http://" + req.LocalEndPoint.Address + ":" + Settings.Instance.MediaPort + req.Url.LocalPath;
-				Console.WriteLine("Redirecting static request to "  + resp.RedirectLocation);
 				resp.StatusCode = (int)HttpStatusCode.MovedPermanently;
 			}
 			resp.OutputStream.Close();
