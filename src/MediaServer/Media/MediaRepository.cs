@@ -161,6 +161,8 @@ namespace MediaServer.Media
 			AddFlickrFolders(onlineFolder);
 			AddPicasaFolder(onlineFolder);
 
+			// This makes no sense.  how is this possible?  I guess mf. itf, or pf will be null if /Volumesn isnt up yet
+			// so I guess this should stay...  got to think about it...
 			if (mf == false && itf == false && ipf == false) _timer.Change(TimeSpan.FromSeconds(30), TimeSpan.FromMilliseconds(-1));
 		}
 

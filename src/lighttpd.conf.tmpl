@@ -5,7 +5,8 @@ server.document-root = "{{docroot}}"
 server.username = "nobody"
 server.groupname = "nogroup"
 server.force-lowercase-filenames = "disable"
-#server.max-keep-alive-requests = 0
+server.max-keep-alive-requests = 0
+connection.kbytes-per-second = 4096
 server.event-handler = "kqueue"
 server.network-backend = "writev"
 
