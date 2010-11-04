@@ -10,7 +10,7 @@ http://www.apple.com/DTDs/PropertyList-1.0.dtd >
 			<string>/usr/bin/mono</string>
 			<string>--optimize=all</string>
 			<string>MediaServer.exe</string>
-			<string>MediaServer/Configuration.xml</string>
+			<string>Configuration.xml</string>
 			<string>MediaServerLog.xml</string>
 		</array>
 		<!--key>KeepAlive</key>
@@ -18,7 +18,7 @@ http://www.apple.com/DTDs/PropertyList-1.0.dtd >
 		<key>RunAtLoad</key>
 		<true/>
 		<key>WorkingDirectory</key>
-		<string>/Users/guyoliver/Project/UPNP/</string>
+		<string>/Users/guyoliver/Project/Private/UPNP/bin/</string>
 		<key>HopefullyExitsFirst</key>
 		<true/>
 		<key>LowPriorityIO</key>
