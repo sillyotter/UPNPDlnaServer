@@ -13,6 +13,7 @@ namespace MediaServer.Media.Nodes
 		private readonly string _title;
 		private readonly ReaderWriterLockSlim _readerWriterLock = new ReaderWriterLockSlim();
 		private readonly List<MediaNode> _children = new List<MediaNode>();
+		private uint? _containerUpdateId = null;
 		
 		public FolderNode(FolderNode parentNode, string title)
 			: base(parentNode)
@@ -34,14 +35,26 @@ namespace MediaServer.Media.Nodes
 		{
 			get 
 			{ 
-				_readerWriterLock.EnterReadLock();
+				_readerWriterLock.EnterUpgradeableReadLock();
 				try
 				{
-					return (uint)(_children.Sum(item => (uint)item.GetHashCode()) + (uint)GetHashCode());
+					if (!_containerUpdateId.HasValue) 
+					{
+						_readerWriterLock.EnterWriteLock();
+						try
+						{
+							_containerUpdateId = (uint)(_children.Sum(item => (uint)item.GetHashCode()) + (uint)GetHashCode());
+						}
+						finally
+						{
+							_readerWriterLock.ExitWriteLock();
+						}
+					}
+					return _containerUpdateId.Value;
 				}
 				finally
 				{
-					_readerWriterLock.ExitReadLock();
+					_readerWriterLock.ExitUpgradeableReadLock();
 				}
 			}
 		}
@@ -88,6 +101,7 @@ namespace MediaServer.Media.Nodes
 			try
 			{
 				_children.AddRange(nodes);
+				_containerUpdateId = null;
 			}
 			finally
 			{
@@ -102,6 +116,7 @@ namespace MediaServer.Media.Nodes
 			try
 			{
 				_children.RemoveAll(nodes.Contains);
+				_containerUpdateId = null;
 			}
 			finally
 			{
@@ -245,6 +260,7 @@ namespace MediaServer.Media.Nodes
 			try
 			{
 				_children.Add(item);
+				_containerUpdateId = null;
 			}
 			finally
 			{
@@ -259,6 +275,7 @@ namespace MediaServer.Media.Nodes
 			try
 			{
 				_children.Clear();
+				_containerUpdateId = null;
 			}
 			finally
 			{
@@ -297,6 +314,7 @@ namespace MediaServer.Media.Nodes
 			_readerWriterLock.EnterWriteLock();
 			try
 			{
+				_containerUpdateId = null;
 				return _children.Remove(item);
 			}
 			finally
@@ -349,6 +367,7 @@ namespace MediaServer.Media.Nodes
 			try
 			{
 				_children.Insert(index, item);
+				_containerUpdateId = null;
 			}
 			finally
 			{
@@ -362,6 +381,7 @@ namespace MediaServer.Media.Nodes
 			try
 			{
 				_children.RemoveAt(index);
+				_containerUpdateId = null;
 			}
 			finally
 			{
@@ -389,6 +409,7 @@ namespace MediaServer.Media.Nodes
 				try
 				{
 					_children[index] = value;
+					_containerUpdateId = null;
 				}
 				finally
 				{

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using MediaServer.Configuration;
+using MediaServer.Utility;
 
 namespace MediaServer.Web
 {
