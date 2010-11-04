@@ -22,8 +22,6 @@ namespace MediaServer.Media
 		private readonly ReadWriteLockedCache<Guid, MediaNode> _resourceCache = 
 			new ReadWriteLockedCache<Guid, MediaNode>();
 		
-		private readonly Timer _timer;
-
 		#region Singleton
 		private static readonly MediaRepository SingletonInstance = new MediaRepository();
 		public static MediaRepository Instance
@@ -40,7 +38,6 @@ namespace MediaServer.Media
 
 		private MediaRepository()
 		{ 
-			_timer = new Timer(InternalInitialize);
 			//Settings.Instance.ConfigurationChanged += OnConfigurationChanged;
 		}
 
@@ -151,9 +148,9 @@ namespace MediaServer.Media
 
 			var root = new FolderNode(null, "Root");
 			
-			var mf = AddMediaFolders(root);
-			var itf = AddiTunesFolders(root);
-			var ipf = AddiPhotoFolders(root);
+			AddMediaFolders(root);
+			AddiTunesFolders(root);
+			AddiPhotoFolders(root);
 			
 			var onlineFolder = new FolderNode(root, "Online");
 			root.Add(onlineFolder);
@@ -163,12 +160,14 @@ namespace MediaServer.Media
 
 			// This makes no sense.  how is this possible?  I guess mf. itf, or pf will be null if /Volumesn isnt up yet
 			// so I guess this should stay...  got to think about it...
-			if (mf == false && itf == false && ipf == false) _timer.Change(TimeSpan.FromSeconds(30), TimeSpan.FromMilliseconds(-1));
+			// Actually, maybe not.
+			//if (mf == false && itf == false && ipf == false) _timer.Change(TimeSpan.FromSeconds(30), TimeSpan.FromMilliseconds(-1));
 		}
 
 		public void Initialize()
 		{
-			_timer.Change(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(-1));
+			InternalInitialize(null);
+			//_timer.Change(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(-1));
 		}
 
 		public void AddNodeToIndex(MediaNode node)

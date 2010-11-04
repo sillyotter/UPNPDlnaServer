@@ -73,7 +73,8 @@ namespace MediaServer.Media.Nodes
 			
 			var mediaFiles =
 				from item in Directory.GetFiles(_location)
-				where UpnpTypeLookup.GetSupportedExtensions().Contains(Path.GetExtension(item))
+				where ((!Path.GetFileName(item).StartsWith(".")) && 
+						(UpnpTypeLookup.GetSupportedExtensions().Contains(Path.GetExtension(item))))
 				select FileNode.Create(this, item);
 
 			AddRange(dirs.Cast<MediaNode>().Concat(mediaFiles.Cast<MediaNode>()).ToList());
