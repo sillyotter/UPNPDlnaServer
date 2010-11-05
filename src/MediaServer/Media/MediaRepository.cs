@@ -196,8 +196,7 @@ namespace MediaServer.Media
 		{
 			get
 			{
-				var x = (uint) _resourceCache.Select(item => item.Value).OfType<FolderNode>().Sum(item => item.ContainerUpdateId);
-				return x;
+				return (uint)_resourceCache.Sum(item => item.GetHashCode());
 			}
 		}
 
