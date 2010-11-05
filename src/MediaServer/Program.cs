@@ -7,10 +7,9 @@ using MediaServer.Media;
 using MediaServer.SSDP;
 using MediaServer.Utility;
 using MediaServer.Web;
-
-#if (WIN32)
 using System.Threading;
-#else
+
+#if (!WIN32)
 using Mono.Unix;
 using Mono.Unix.Native;
 #endif
@@ -22,6 +21,7 @@ namespace MediaServer
 		static void Main(string[] args)
 		{
 			var configFileName = "MediaServer/Configuration.xml";
+			Thread.Sleep((int)TimeSpan.FromMinutes(2).TotalMilliseconds);
 			string logfileName = null;
 			if (args.Length >= 1)
 			{
