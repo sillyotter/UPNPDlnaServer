@@ -43,7 +43,10 @@ namespace MediaServer.Media.Nodes
 						_readerWriterLock.EnterWriteLock();
 						try
 						{
-							_containerUpdateId = (uint)(_children.Sum(item => (uint)item.GetHashCode()) + (uint)GetHashCode());
+							unchecked
+							{
+								_containerUpdateId = (uint)(_children.Sum(item => (uint)item.GetHashCode()) + (uint)GetHashCode());
+							}
 						}
 						finally
 						{
