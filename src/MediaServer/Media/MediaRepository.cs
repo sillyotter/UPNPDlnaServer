@@ -19,6 +19,7 @@ namespace MediaServer.Media
 		private static readonly XNamespace Dc = "http://purl.org/dc/elements/1.1/";
 		private static readonly XNamespace Upnp = "urn:schemas-upnp-org:metadata-1-0/upnp/";
 
+		private readonly Timer _timer;
 		private readonly ReadWriteLockedCache<Guid, MediaNode> _resourceCache = 
 			new ReadWriteLockedCache<Guid, MediaNode>();
 		
@@ -38,6 +39,7 @@ namespace MediaServer.Media
 
 		private MediaRepository()
 		{ 
+			_timer = new Timer(InternalInitialize);
 			//Settings.Instance.ConfigurationChanged += OnConfigurationChanged;
 		}
 
@@ -148,9 +150,9 @@ namespace MediaServer.Media
 
 			var root = new FolderNode(null, "Root");
 			
-			AddMediaFolders(root);
-			AddiTunesFolders(root);
-			AddiPhotoFolders(root);
+			var mf = AddMediaFolders(root);
+			var itf = AddiTunesFolders(root);
+			var ipf = AddiPhotoFolders(root);
 			
 			var onlineFolder = new FolderNode(root, "Online");
 			root.Add(onlineFolder);
@@ -161,13 +163,12 @@ namespace MediaServer.Media
 			// This makes no sense.  how is this possible?  I guess mf. itf, or pf will be null if /Volumesn isnt up yet
 			// so I guess this should stay...  got to think about it...
 			// Actually, maybe not.
-			//if (mf == false && itf == false && ipf == false) _timer.Change(TimeSpan.FromSeconds(30), TimeSpan.FromMilliseconds(-1));
+			if (mf == false && itf == false && ipf == false) _timer.Change(TimeSpan.FromSeconds(30), TimeSpan.FromMilliseconds(-1));
 		}
 
 		public void Initialize()
 		{
-			InternalInitialize(null);
-			//_timer.Change(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(-1));
+			_timer.Change(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(-1));
 		}
 
 		public void AddNodeToIndex(MediaNode node)
