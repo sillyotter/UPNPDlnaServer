@@ -37,7 +37,7 @@ namespace SSDP
 			if (_multicastGroupAddress == null) throw new InvalidOperationException("Invalid group address");
 
 			_multicastGrounEndPoint = new IPEndPoint(_multicastGroupAddress, UpnpPort);
-			_multicastGroupListenerClient = new UdpClient { MulticastLoopback = false, Ttl = 4 };
+			_multicastGroupListenerClient = new UdpClient { MulticastLoopback = false, Ttl = 8 };
 			_multicastGroupListenerClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 			_multicastGroupListenerClient.Client.Bind(new IPEndPoint(IPAddress.Any, UpnpPort));
 			_multicastGroupListenerClient.JoinMulticastGroup(_multicastGroupAddress);
