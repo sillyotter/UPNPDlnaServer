@@ -232,14 +232,7 @@ namespace MediaServer.Media
 			{
 				unchecked
 				{
-<<<<<<< local
-					return (uint) _resourceCache.Select(item => item.Value)
-						.OfType<FolderNode>()
-						.Sum(item => item.ContainerUpdateId);
-=======
 					return _resourceCache.VersionId;
-					//return (uint) _resourceCache.Select(item => item.Value).OfType<FolderNode>().Sum(item => item.ContainerUpdateId);
->>>>>>> other
 				}
 			}
 		}
