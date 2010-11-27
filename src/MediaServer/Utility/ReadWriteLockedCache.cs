@@ -27,8 +27,35 @@ namespace MediaServer.Utility
 	{
 		#region Data
 
+		private uint _versionId = 0;
 		private readonly Dictionary<TKey, TValue> _storage = new Dictionary<TKey, TValue>();
 		private readonly ReaderWriterLockSlim _readWriteLock = new ReaderWriterLockSlim();
+
+
+		// Only access from inside write lock
+		private void UpdateVersionId()
+		{
+			unchecked
+			{
+				_versionId += 1;
+			}
+		}
+
+		public uint VersionId
+		{
+			get
+			{
+				_readWriteLock.EnterReadLock();
+				try
+				{
+					return _versionId;
+				}
+				finally
+				{
+					_readWriteLock.ExitReadLock();
+				}
+			}
+		}
 
 		#endregion
 
@@ -114,6 +141,7 @@ namespace MediaServer.Utility
 			_readWriteLock.EnterWriteLock();
 			try
 			{
+				UpdateVersionId();
 				_storage[key] = value;
 			}
 			finally
@@ -133,6 +161,7 @@ namespace MediaServer.Utility
 			_readWriteLock.EnterWriteLock();
 			try
 			{
+				UpdateVersionId();
 				foreach(var pair in valuePairs)
 				{
 					_storage[pair.Key] = pair.Value;
@@ -157,6 +186,7 @@ namespace MediaServer.Utility
 			_readWriteLock.EnterWriteLock();
 			try
 			{
+				UpdateVersionId();
 				_storage.Remove(key);
 			}
 			finally			
@@ -175,6 +205,7 @@ namespace MediaServer.Utility
 			_readWriteLock.EnterWriteLock();
 			try
 			{
+				UpdateVersionId();
 				foreach (var key in keys)
 				{
 					_storage.Remove(key);
@@ -205,6 +236,7 @@ namespace MediaServer.Utility
 				_readWriteLock.EnterWriteLock();
 				try
 				{
+					UpdateVersionId();
 					_storage.Add(key, value);
 				}
 				finally
@@ -246,6 +278,7 @@ namespace MediaServer.Utility
 				_readWriteLock.EnterWriteLock();
 				try
 				{
+					UpdateVersionId();
 					foreach (var item in toAdd)
 					{
 						_storage.Add(item.Key, item.Value);
@@ -283,6 +316,7 @@ namespace MediaServer.Utility
 				_readWriteLock.EnterWriteLock();
 				try
 				{
+					UpdateVersionId();
 					_storage[key] = value;
 				}
 				finally
@@ -323,6 +357,7 @@ namespace MediaServer.Utility
 				_readWriteLock.EnterWriteLock();
 				try
 				{
+					UpdateVersionId();
 					foreach (var item in toRemove)
 					{
 						_storage[item.Key] = item.Value;
@@ -352,6 +387,7 @@ namespace MediaServer.Utility
 			_readWriteLock.EnterWriteLock();
 			try
 			{
+				_versionId = 0;
 				_storage.Clear();
 			}
 			finally

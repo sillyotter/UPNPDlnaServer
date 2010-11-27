@@ -13,7 +13,7 @@ namespace MediaServer.Media.Nodes
 		private readonly string _title;
 		private readonly ReaderWriterLockSlim _readerWriterLock = new ReaderWriterLockSlim();
 		private readonly List<MediaNode> _children = new List<MediaNode>();
-		private uint? _containerUpdateId = null;
+		private uint _containerUpdateId = 0;
 		
 		public FolderNode(FolderNode parentNode, string title)
 			: base(parentNode)
@@ -35,36 +35,32 @@ namespace MediaServer.Media.Nodes
 		{
 			get 
 			{ 
-				_readerWriterLock.EnterUpgradeableReadLock();
+				_readerWriterLock.EnterReadLock();
 				try
 				{
-					if (!_containerUpdateId.HasValue) 
-					{
-						_readerWriterLock.EnterWriteLock();
-						try
-						{
-							unchecked
-							{
-								_containerUpdateId = (uint)(_children.Sum(item => (uint)item.GetHashCode()) + (uint)GetHashCode());
-							}
-						}
-						finally
-						{
-							_readerWriterLock.ExitWriteLock();
-						}
-					}
-					return _containerUpdateId.Value;
+					return _containerUpdateId;
 				}
 				finally
 				{
-					_readerWriterLock.ExitUpgradeableReadLock();
+					_readerWriterLock.ExitReadLock();
 				}
+			}
+		}
+
+		private void UpdateContainerUpdateId()
+		{
+			// Only ever call fro inside a write lock.
+			// I dont costrut them to support recursion, so wont grab it here
+			unchecked
+			{
+				//_containerUpdateId = (uint)(_children.Sum(item => (uint)item.GetHashCode()) + (uint)GetHashCode());
+				_containerUpdateId += 1;
 			}
 		}
 
 		public override void RemoveFromIndexes()
 		{
-			_readerWriterLock.EnterReadLock();
+			_readerWriterLock.EnterWriteLock();
 			try
 			{
 				base.RemoveFromIndexes();
@@ -75,7 +71,7 @@ namespace MediaServer.Media.Nodes
 			}
 			finally
 			{
-				_readerWriterLock.ExitReadLock();
+				_readerWriterLock.ExitWriteLock();
 			}
 		}
 
@@ -104,7 +100,7 @@ namespace MediaServer.Media.Nodes
 			try
 			{
 				_children.AddRange(nodes);
-				_containerUpdateId = null;
+				UpdateContainerUpdateId();
 			}
 			finally
 			{
@@ -119,7 +115,7 @@ namespace MediaServer.Media.Nodes
 			try
 			{
 				_children.RemoveAll(nodes.Contains);
-				_containerUpdateId = null;
+				UpdateContainerUpdateId();
 			}
 			finally
 			{
@@ -158,12 +154,10 @@ namespace MediaServer.Media.Nodes
 			_readerWriterLock.EnterReadLock();
 			try
 			{
-				var start = (int)startingIndex;
-				var stop = Math.Min(_children.Count, (int)(startingIndex + requestedCount));
-				for(var i = start; i < stop; ++i)
-				{
-					yield return _children[i].RenderMetadata(queryEndpoint, mediaEndpoint);
-				}
+				return _children.Skip((int)startingIndex)
+					.Take((int)requestedCount)
+					.Select(item => item.RenderMetadata(queryEndpoint, mediaEndpoint))
+					.ToList();
 			}
 			finally
 			{
@@ -263,7 +257,7 @@ namespace MediaServer.Media.Nodes
 			try
 			{
 				_children.Add(item);
-				_containerUpdateId = null;
+				UpdateContainerUpdateId();
 			}
 			finally
 			{
@@ -278,7 +272,7 @@ namespace MediaServer.Media.Nodes
 			try
 			{
 				_children.Clear();
-				_containerUpdateId = null;
+				UpdateContainerUpdateId();
 			}
 			finally
 			{
@@ -317,8 +311,9 @@ namespace MediaServer.Media.Nodes
 			_readerWriterLock.EnterWriteLock();
 			try
 			{
-				_containerUpdateId = null;
-				return _children.Remove(item);
+				var x = _children.Remove(item);
+				UpdateContainerUpdateId();
+				return x;
 			}
 			finally
 			{
@@ -370,7 +365,7 @@ namespace MediaServer.Media.Nodes
 			try
 			{
 				_children.Insert(index, item);
-				_containerUpdateId = null;
+				UpdateContainerUpdateId();
 			}
 			finally
 			{
@@ -384,7 +379,7 @@ namespace MediaServer.Media.Nodes
 			try
 			{
 				_children.RemoveAt(index);
-				_containerUpdateId = null;
+				UpdateContainerUpdateId();
 			}
 			finally
 			{
@@ -412,7 +407,7 @@ namespace MediaServer.Media.Nodes
 				try
 				{
 					_children[index] = value;
-					_containerUpdateId = null;
+					UpdateContainerUpdateId();
 				}
 				finally
 				{

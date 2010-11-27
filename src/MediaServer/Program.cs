@@ -34,11 +34,11 @@ namespace MediaServer
 			
 			if (!String.IsNullOrEmpty(logfileName))
 			{
-				Logger.Instance.Initialize(logfileName, LogLevel.Debug);
+				//Logger.Instance.Initialize(logfileName, LogLevel.Debug);
 			}
 			else
 			{
-				Logger.Instance.LogLogLevel = LogLevel.Debug;
+				//Logger.Instance.LogLogLevel = LogLevel.Debug;
 			}
 
 			Settings.Instance.LoadConfigurationFile(configFileName);

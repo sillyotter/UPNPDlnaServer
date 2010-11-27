@@ -198,7 +198,8 @@ namespace MediaServer.Media
 			{
 				unchecked
 				{
-				return (uint) _resourceCache.Select(item => item.Value).OfType<FolderNode>().Sum(item => item.ContainerUpdateId);
+					return _resourceCache.VersionId;
+					//return (uint) _resourceCache.Select(item => item.Value).OfType<FolderNode>().Sum(item => item.ContainerUpdateId);
 				}
 			}
 

@@ -10,23 +10,23 @@ namespace SSDP
 {
 	public sealed class UpnpDiscoveryService
 	{
-		#region Singleton
+#region Singleton
 
 		static UpnpDiscoveryService()
 		{
 		}
 
 		private static readonly UpnpDiscoveryService SingletonInstance = new UpnpDiscoveryService();
-		
+
 		public static UpnpDiscoveryService Instance { get { return SingletonInstance; } }
 
-		#endregion
+#endregion
 
 		public event EventHandler<UpnpDiscoveryMessageReceivedEventArgs> MessageReceived;
 
 		private const string UpnpMulticastGroup = "239.255.255.250";
 		private const int UpnpPort = 1900;
-		
+
 		private readonly UdpClient _multicastGroupListenerClient;
 		private readonly IPAddress _multicastGroupAddress;
 		private readonly IPEndPoint _multicastGrounEndPoint;
@@ -59,29 +59,26 @@ namespace SSDP
 
 		private void ReceiveHandler(IAsyncResult res)
 		{
-			lock (this)
+			var remoteEndpoint = new IPEndPoint(0, 0);
+			byte[] data;
+
+			try
 			{
-				var remoteEndpoint = new IPEndPoint(0, 0);
-				byte[] data;
-
-				try
-				{
-					data = _multicastGroupListenerClient.EndReceive(res, ref remoteEndpoint);
-				}
-				catch (Exception)
-				{
-					return;
-				}
-				finally
-				{
-					_multicastGroupListenerClient.BeginReceive(ReceiveHandler, null);
-				}
-
-				var messageText = Encoding.ASCII.GetString(data);
-				var rawMsg = UpnpMessage.Create(messageText);
-
-				OnMessageReceived(rawMsg, remoteEndpoint);
+				data = _multicastGroupListenerClient.EndReceive(res, ref remoteEndpoint);
 			}
+			catch (Exception)
+			{
+				return;
+			}
+			finally
+			{
+				_multicastGroupListenerClient.BeginReceive(ReceiveHandler, null);
+			}
+
+			var messageText = Encoding.ASCII.GetString(data);
+			var rawMsg = UpnpMessage.Create(messageText);
+
+			OnMessageReceived(rawMsg, remoteEndpoint);
 		}
 
 		private void OnMessageReceived(UpnpMessage message, IPEndPoint remoteEndPoint)
@@ -95,26 +92,20 @@ namespace SSDP
 
 		public void SendMessage(UpnpMessage msg)
 		{
-			lock (this)
+			using (var client = new UdpClient())
 			{
-				using (var client = new UdpClient())
-				{
-					var data = Encoding.ASCII.GetBytes(msg.ToString());
-					client.Send(data, data.Length, _multicastGrounEndPoint);
-				}
+				var data = Encoding.ASCII.GetBytes(msg.ToString());
+				client.Send(data, data.Length, _multicastGrounEndPoint);
 			}
 		}
 
 		public void SendMessages(IEnumerable<UpnpMessage> msgs)
 		{
-			lock (this)
+			using (var client = new UdpClient())
 			{
-				using (var client = new UdpClient())
+				foreach (var data in msgs.Select(msg => Encoding.ASCII.GetBytes(msg.ToString())))
 				{
-					foreach (var data in msgs.Select(msg => Encoding.ASCII.GetBytes(msg.ToString())))
-					{
-					    client.Send(data, data.Length, _multicastGrounEndPoint);
-					}
+					client.Send(data, data.Length, _multicastGrounEndPoint);
 				}
 			}
 		}
@@ -122,30 +113,22 @@ namespace SSDP
 
 		public void SendMessage(UpnpMessage msg, IPEndPoint endpoint)
 		{
-			lock(this)
+			using (var client = new UdpClient())
 			{
-				using (var client = new UdpClient())
-				{
-					var data = Encoding.ASCII.GetBytes(msg.ToString());
-					client.Send(data, data.Length, endpoint);
-				}
+				var data = Encoding.ASCII.GetBytes(msg.ToString());
+				client.Send(data, data.Length, endpoint);
 			}
 		}
 
 		public void SendMessages(IEnumerable<UpnpMessage> msgs, IPEndPoint endpoint)
 		{
-			lock (this)
+			using (var client = new UdpClient())
 			{
-				using (var client = new UdpClient())
+				foreach (var data in msgs.Select(msg => Encoding.ASCII.GetBytes(msg.ToString())))
 				{
-					foreach (var data in msgs.Select(msg => Encoding.ASCII.GetBytes(msg.ToString())))
-					{
-					    client.Send(data, data.Length, endpoint);
-					}
+					client.Send(data, data.Length, endpoint);
 				}
 			}
 		}
-
-
 	}
 }

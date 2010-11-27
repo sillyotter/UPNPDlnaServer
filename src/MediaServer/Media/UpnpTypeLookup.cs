@@ -82,6 +82,11 @@ namespace MediaServer.Media
 			return query.FirstOrDefault();
 		}
 
+		public static bool IsValidExtension(string extension)
+		{
+			return UpnpItemTypes.ContainsKey(extension);
+		}
+
 
 	}
 }
