@@ -142,6 +142,40 @@ namespace MediaServer.Media
 			                      	item => new PicasaFeaturedPhotosFolder(picasaFolder, item.Label)).Cast<MediaNode>().ToList());
 		}
 
+		private void PartitionFilesystemObjects(IEnumerable<string> paths, 
+				out IList<string> present, 
+				out IList<string> missing)
+		{
+			present = new List<string>();
+			missing = new List<string>();
+
+			foreach (var item in paths)
+			{
+				if (Directory.Exists(item) || File.Exists(item))
+				{
+					present.Add(item);
+				}
+				else
+				{
+					missing.Add(item);
+				}
+			}
+		}
+
+		private void WaitForFilesystemObjectsToBePresent(IEnumerable<string> paths)
+		{
+			IList<string> pres;
+			IList<string> miss;
+			var count = 0;
+
+			PartitionFilesystemObjects(paths, out pres, out miss);
+			while (miss.Count > 0 && count++ < 4)
+			{
+				Thread.Sleep(30*1000);
+				PartitionFilesystemObjects(miss, out pres, out miss);
+			}
+		}
+
 		private void InternalInitialize(object state)
 		{
 			_resourceCache.Clear();
@@ -198,11 +232,16 @@ namespace MediaServer.Media
 			{
 				unchecked
 				{
+<<<<<<< local
+					return (uint) _resourceCache.Select(item => item.Value)
+						.OfType<FolderNode>()
+						.Sum(item => item.ContainerUpdateId);
+=======
 					return _resourceCache.VersionId;
 					//return (uint) _resourceCache.Select(item => item.Value).OfType<FolderNode>().Sum(item => item.ContainerUpdateId);
+>>>>>>> other
 				}
 			}
-
 		}
 
 		public void BrowseMetadata(string objectId, string filter, uint startingIndex,

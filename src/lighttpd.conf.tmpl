@@ -7,12 +7,11 @@ server.groupname = "nogroup"
 server.force-lowercase-filenames = "disable"
 server.max-keep-alive-requests = 0
 connection.kbytes-per-second = 4096
-server.event-handler = "kqueue"
+server.event-handler = "select"
 server.network-backend = "writev"
 
 server.modules = ( "mod_alias", "mod_expire" )
 
-#connection.kbytes-per-second = 4096
 dir-listing.activate = "disable"
 index-file.names = ( "index.html", "index.htm" )
 expire.url = ( "" => "access plus 1 days" )
@@ -20,7 +19,6 @@ expire.url = ( "" => "access plus 1 days" )
 #debug.log-request-header = "enable"
 #debug.log-request-handling = "enable"
 #debug.log-response-header = "enable"
-
 
 mimetype.assign = (
 	{{mimetypes}}
