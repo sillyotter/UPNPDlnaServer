@@ -17,12 +17,12 @@ namespace MediaServer.Media.Nodes
 		{
 			_source = source;
 			
-			_watcher.IncludeSubdirectories = false;
-			_watcher.Path = Path.GetDirectoryName(_source);
-			_watcher.Filter = Path.GetFileName(_source);
-			_watcher.EnableRaisingEvents = false;
-			_watcher.NotifyFilter = NotifyFilters.LastWrite;
-			_watcher.Changed += OnChanged;		
+			//_watcher.IncludeSubdirectories = false;
+			//_watcher.Path = Path.GetDirectoryName(_source);
+			//_watcher.Filter = Path.GetFileName(_source);
+			//_watcher.EnableRaisingEvents = false;
+			//_watcher.NotifyFilter = NotifyFilters.LastWrite;
+			//_watcher.Changed += OnChanged;		
 			
 			ProcessFileInBackground(_source);
 		}
