@@ -9,13 +9,6 @@
 			<iTunes name="Guy's Music">/Volumes/Storage/Media/GuysiTunes/iTunes Library.xml</iTunes>
 			<iTunes name="Lisa's Music">/Volumes/Storage/Media/LisasiTunes/iTunes Library.xml</iTunes>
 			<iPhoto name="Pictures">/Volumes/Storage/Media/Pictures/iPhoto Library/AlbumData.xml</iPhoto>
-			<!--Flickr>
-				<User label="Felix Craft Corner" user="felixscraftcorner"/>
-				<Interesting label="Interesting"/>
-				<Location label="Example Location" latitude="39.973269" longitude="-82.771721" radius="100"/>
-				<Text label="Example Query" query="fish"/>
-				<Tags label="Example Tag Query" query="fish"/>
-			</Flickr-->
 		</Media>
 	</Storage>
 	<Icons movie="MovieIcon.png" music="MusicIcon.png" image="ImageIcon.png" server="ServerIcon.png" />

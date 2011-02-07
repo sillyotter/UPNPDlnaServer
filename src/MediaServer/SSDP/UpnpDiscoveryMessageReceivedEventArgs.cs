@@ -1,8 +1,8 @@
 using System;
 using System.Net;
-using SSDP.Messages;
+using  MediaServer.SSDP.Messages;
 
-namespace SSDP
+namespace MediaServer.SSDP
 {
 	public class UpnpDiscoveryMessageReceivedEventArgs : EventArgs
 	{

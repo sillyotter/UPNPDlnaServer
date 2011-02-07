@@ -4,9 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using SSDP.Messages;
+using MediaServer.SSDP.Messages;
 
-namespace SSDP
+namespace MediaServer.SSDP
 {
 	public sealed class UpnpDiscoveryService
 	{

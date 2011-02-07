@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SSDP.Messages
+namespace MediaServer.SSDP.Messages
 {
 	public class UpnpMessage
 	{

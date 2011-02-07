@@ -1,4 +1,4 @@
 *~
-build/
 bin/
-support/lighttpd-1.4.28
+build/
+support/lighttpd-1.4.28/

@@ -1,21 +1,26 @@
 using System;
 
-namespace SSDP.Messages
+namespace MediaServer.SSDP.Messages
 {
-	public abstract class UpnpAdvertiseMessage : UpnpMessage
+	public class UpnpSearchResponse : UpnpMessage
 	{
-		protected UpnpAdvertiseMessage(string data)
+		public UpnpSearchResponse(string data)
 			: base(data)
 		{
 		}
 
-		protected UpnpAdvertiseMessage(Guid deviceId, NotificationType nt, string entity, int entityVersion)
+		public UpnpSearchResponse(TimeSpan expiration, Uri infoLink, 
+		                          Guid deviceId, NotificationType nt, string entity, int entityVersion, string serverName)
 		{
-			FirstLine = "NOTIFY * HTTP/1.1";
-			base["HOST"] = "239.255.255.250:1900";
+			FirstLine = "HTTP/1.1 200 OK";
+			base["CACHE-CONTROL"] = String.Format("max-age = {0}", (int)expiration.TotalSeconds);
+			base["DATE"] = DateTime.Now.ToUniversalTime().ToString("R");
+			base["EXT"] = String.Empty;
+			base["LOCATION"] = infoLink.ToString();
+			base["SERVER"] = serverName;
 			
 			var notificationType = "";
-			switch(nt)
+			switch (nt)
 			{
 				case NotificationType.RootDevice:
 					notificationType = "upnp:rootdevice";
@@ -30,8 +35,9 @@ namespace SSDP.Messages
 					notificationType = "urn:schemas-upnp-org:service:" + entity + ":" + entityVersion;
 					break;
 			}
-			base["NT"] = notificationType;
-			
+
+			base["ST"] = notificationType;
+
 			if (notificationType.StartsWith("uuid"))
 			{
 				base["USN"] = "uuid:" + deviceId;
@@ -39,6 +45,32 @@ namespace SSDP.Messages
 			else
 			{
 				base["USN"] = "uuid:" + deviceId + "::" + notificationType;
+			}
+		}
+
+		public string SearchTarget
+		{
+			get
+			{
+				return base["ST"];
+			}
+		}
+
+		public TimeSpan Expiration
+		{
+			get
+			{
+				var cc = base["CACHE-CONTROL"];
+				var res = cc.Split(' ');
+				return res.Length == 3 ? TimeSpan.FromSeconds(double.Parse(res[2])) : TimeSpan.Zero;
+			}
+		}
+
+		public Uri InfoLink
+		{
+			get
+			{
+				return new Uri(base["LOCATION"]);
 			}
 		}
 

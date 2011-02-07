@@ -1,4 +1,4 @@
-﻿namespace SSDP.Messages
+﻿namespace MediaServer.SSDP.Messages
 {
 	public enum SearchType
 	{

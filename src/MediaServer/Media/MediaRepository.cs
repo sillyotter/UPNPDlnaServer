@@ -6,8 +6,6 @@ using System.Threading;
 using System.Xml.Linq;
 using MediaServer.Configuration;
 using MediaServer.Media.Nodes;
-using MediaServer.Media.Nodes.Flickr;
-using MediaServer.Media.Nodes.Picassa;
 using MediaServer.Utility;
 using System.Collections.Generic;
 
@@ -92,90 +90,6 @@ namespace MediaServer.Media
 			return false;
 		}
 
-		private static void AddFlickrFolders(FolderNode root)
-		{
-			var configElements = Settings.Instance.FlickrConfigElements;
-			if (configElements.Count() <= 0) return;
-			
-			var flickrFolder = new FolderNode(root, "Flickr");
-			root.Add(flickrFolder);
-
-			flickrFolder.AddRange(
-				configElements.OfType<FlickrUserConfigElement>().Select(
-					item => new FlickrUserNode(flickrFolder, item.Label, item.User)).Cast<MediaNode>().ToList());
-
-			flickrFolder.AddRange(
-				configElements.OfType<FlickrInterestingConfigElement>().Select(
-					item => new FlickrInterestingNode(flickrFolder, item.Label)).Cast<MediaNode>().ToList());
-
-			flickrFolder.AddRange(
-				configElements.OfType<FlickrLocationConfigElement>().Select(
-					item => new FlickrLocationNode(flickrFolder, item.Label, item.Latitude, item.Longitude, item.Radius)).Cast<MediaNode>().ToList());
-
-			flickrFolder.AddRange(
-				configElements.OfType<FlickrTextConfigElement>().Select(
-					item => new FlickrTextQueryNode(flickrFolder, item.Label, item.Text)).Cast<MediaNode>().ToList());
-
-			flickrFolder.AddRange(
-				configElements.OfType<FlickrTagsConfigElement>().Select(
-					item => new FlickrTagQueryNode(flickrFolder, item.Label, item.Tags)).Cast<MediaNode>().ToList());
-		}
-
-		private static void AddPicasaFolder(FolderNode root)
-		{
-			var configElements = Settings.Instance.PicasaConfigElements;
-			if (configElements.Count() <= 0) return;
-			
-			var picasaFolder = new FolderNode(root, "Picasa");
-			root.Add(picasaFolder);
-
-			picasaFolder.AddRange(configElements.OfType<PicasaUserConfigElement>().Select(
-			                      	item => new PicasaUserFolder(picasaFolder, item.Label, item.UserId)).Cast<MediaNode>().ToList());
-
-			picasaFolder.AddRange(configElements.OfType<PicasaTextConfigElement>().Select(
-			                      	item => new PicasaTextSearchFolder(picasaFolder, item.Label, item.Query)).Cast<MediaNode>().ToList());
-
-			picasaFolder.AddRange(configElements.OfType<PicasaTagConfigElement>().Select(
-			                      	item => new PicasaTagSearchFolder(picasaFolder, item.Label, item.Query)).Cast<MediaNode>().ToList());
-
-			picasaFolder.AddRange(configElements.OfType<PicasaFeaturedConfigElement>().Select(
-			                      	item => new PicasaFeaturedPhotosFolder(picasaFolder, item.Label)).Cast<MediaNode>().ToList());
-		}
-
-		private void PartitionFilesystemObjects(IEnumerable<string> paths, 
-				out IList<string> present, 
-				out IList<string> missing)
-		{
-			present = new List<string>();
-			missing = new List<string>();
-
-			foreach (var item in paths)
-			{
-				if (Directory.Exists(item) || File.Exists(item))
-				{
-					present.Add(item);
-				}
-				else
-				{
-					missing.Add(item);
-				}
-			}
-		}
-
-		private void WaitForFilesystemObjectsToBePresent(IEnumerable<string> paths)
-		{
-			IList<string> pres;
-			IList<string> miss;
-			var count = 0;
-
-			PartitionFilesystemObjects(paths, out pres, out miss);
-			while (miss.Count > 0 && count++ < 4)
-			{
-				Thread.Sleep(30*1000);
-				PartitionFilesystemObjects(miss, out pres, out miss);
-			}
-		}
-
 		private void InternalInitialize(object state)
 		{
 			_resourceCache.Clear();
@@ -188,9 +102,6 @@ namespace MediaServer.Media
 			
 			var onlineFolder = new FolderNode(root, "Online");
 			root.Add(onlineFolder);
-
-			AddFlickrFolders(onlineFolder);
-			AddPicasaFolder(onlineFolder);
 
 			// This makes no sense.  how is this possible?  I guess mf. itf, or pf will be null if /Volumesn isnt up yet
 			// so I guess this should stay...  got to think about it...

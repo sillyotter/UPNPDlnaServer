@@ -1,6 +1,6 @@
 using System;
 
-namespace SSDP.Messages
+namespace MediaServer.SSDP.Messages
 {
 	public class UpnpAnnounceMessage : UpnpAdvertiseMessage
 	{

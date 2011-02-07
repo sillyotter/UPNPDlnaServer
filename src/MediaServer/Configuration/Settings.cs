@@ -26,8 +26,6 @@ namespace MediaServer.Configuration
 		private readonly IDictionary<string,string> _mediaFolders = new Dictionary<string,string>();
 		private readonly IDictionary<string,string> _itunesLibraries = new Dictionary<string,string>();
 		private readonly IDictionary<string,string> _iphotoLibraries = new Dictionary<string,string>();
-		private readonly IList<FlickrConfigElement> _flickr = new List<FlickrConfigElement>();
-		private readonly IList<PicasaConfigElement> _picasa = new List<PicasaConfigElement>();
 		private readonly FileSystemWatcher _watcher = new FileSystemWatcher();
 
 		public event EventHandler<EventArgs> ConfigurationChanged;
@@ -84,8 +82,6 @@ namespace MediaServer.Configuration
 			LoadiTunesFiles(configDoc);
 			LoadiPhotoFiles(configDoc);
 			LoadIcons(configDoc);
-			LoadFlickrSettings(configDoc);
-			LoadPicasaSettings(configDoc);
 			GetDeviceIdAndName();
 		}
 
@@ -204,90 +200,6 @@ namespace MediaServer.Configuration
 			foreach (var item in query)
 			{
 				target.Add(item);
-			}
-		}
-
-		public IEnumerable<PicasaConfigElement> PicasaConfigElements { get { return _picasa; } }
-
-		private void LoadPicasaSettings(XContainer configDoc)
-		{
-			var query = from store in configDoc.Descendants("Storage")
-			            from media in store.Elements("Media")
-			            from picasa in media.Elements("Picasa")
-			            select picasa.Elements();
-
-			foreach(var item in query.SelectMany(item => item))
-			{
-				var label = (string)item.Attribute("label");
-				if (String.IsNullOrEmpty(label)) continue;
-				switch(item.Name.LocalName)
-				{
-					case "User":
-						var user = (string)item.Attribute("user");
-						if (String.IsNullOrEmpty(user)) continue;
-						_picasa.Add(new PicasaUserConfigElement(label, user));
-						break;
-					case "Text":
-						var queryText = (string)item.Attribute("query");
-						if (String.IsNullOrEmpty(queryText)) continue;
-						_picasa.Add(new PicasaTextConfigElement(label, queryText));
-						break;
-					case "Tags":
-						var queryTags = (string)item.Attribute("query");
-						if (String.IsNullOrEmpty(queryTags)) continue;
-						_picasa.Add(new PicasaTagConfigElement(label, queryTags));
-						break;
-					case "Featured":
-						_picasa.Add(new PicasaFeaturedConfigElement(label));
-						break;
-				}
-			}
-		}
-
-		public IEnumerable<FlickrConfigElement> FlickrConfigElements { get { return _flickr; } }
-
-		private void LoadFlickrSettings(XContainer configDoc)
-		{
-			var query = from store in configDoc.Descendants("Storage")
-			            from media in store.Elements("Media")
-			            from flickr in media.Elements("Flickr")
-			            select flickr.Elements();
-
-			foreach(var item in query.SelectMany(item => item))
-			{
-				var label = (string)item.Attribute("label");
-				if (String.IsNullOrEmpty(label)) continue;
-				switch(item.Name.LocalName)
-				{
-					case "User":
-						var user = (string)item.Attribute("user");
-						if (String.IsNullOrEmpty(user)) continue;
-						_flickr.Add(new FlickrUserConfigElement(label, user));
-						break;
-					case "Interesting":
-						_flickr.Add(new FlickrInterestingConfigElement(label));
-						break;
-					case "Location":
-						var latitude = item.Attribute("latitude");
-						var longitude = item.Attribute("longitude");
-						var radius = item.Attribute("radius");
-						if (latitude == null || longitude == null || radius == null) continue;
-						_flickr.Add(new FlickrLocationConfigElement(label, 
-						                                            (float)latitude,
-						                                            (float)longitude,
-						                                            (float)radius));
-						break;
-					case "Text":
-						var textQuery = (string)item.Attribute("query");
-						if (String.IsNullOrEmpty(textQuery)) continue;
-						_flickr.Add(new FlickrTextConfigElement(label, textQuery));
-						break;
-					case "Tags":
-						var tagQuery = (string)item.Attribute("query");
-						if (String.IsNullOrEmpty(tagQuery)) continue;
-						_flickr.Add(new FlickrTagsConfigElement(label, tagQuery));
-						break;
-				}
 			}
 		}
 

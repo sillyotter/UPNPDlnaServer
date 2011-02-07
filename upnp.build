@@ -8,7 +8,6 @@
 	<property name="build.dir" value="build"/>
 	<property name="src.dir" value="src"/>
 	<property name="server.src.dir" value="${path::combine(src.dir, 'MediaServer')}"/>
-	<property name="ssdp.src.dir" value="${path::combine(src.dir, 'SSDP')}"/>
 	<property name="deploy.dir" value="bin"/>
 	<property name="lib.dir" value="lib"/>
 	<property name="support.dir" value="support"/>
@@ -36,15 +35,7 @@
 		</delete>
 	</target>
 
-	<target name="SSDPLib" description="build the Simple Service Discovery Protocol Library" depends="directories">
-		<csc target="library" output="${path::combine(build.dir, 'SSDP.dll')}" debug="${debug}" optimize="${not debug}">
-			<sources basedir="${ssdp.src.dir}">
-				<include name="**/*.cs"/>
-			</sources>
-		</csc>
-	</target>
-
-	<target name="MediaServer" description="Build the media server" depends="directories,SSDPLib">
+	<target name="MediaServer" description="Build the media server" depends="directories">
 		<csc target="exe" output="${path::combine(build.dir, 'MediaServer.exe')}" debug="${debug}" optimize="${not debug}">
 			<sources basedir="${server.src.dir}">
 				<include name="**/*.cs"/>
@@ -54,16 +45,10 @@
 					<include name="${build.dir}"/>
 					<include name="${lib.dir}"/>
 				</lib>
-				<include name="SSDP.dll"/>
 				<include name="System.Xml.Linq.dll"/>
 				<include name="System.Web.dll"/>
-				<include name="FlickrNet.dll"/>
 				<include name="Mono.Posix.dll"/>
 				<include name="taglib-sharp.dll"/>
-				<include name="Google.GData.Client.dll"/>
-				<include name="Google.GData.Extensions.dll"/>
-				<include name="Google.GData.Photos.dll"/>
-				<include name="Google.GData.YouTube.dll"/>
 			</references>
 		</csc>
 	</target>

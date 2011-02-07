@@ -5,8 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using MediaServer.Configuration;
-using SSDP;
-using SSDP.Messages;
+using MediaServer.SSDP.Messages;
 
 namespace MediaServer.SSDP
 {
