@@ -1,7 +1,5 @@
 The below notes are old.  New ones up top
 
-this app nees to have its 5min startup wait removed
-
 ---
 
 
