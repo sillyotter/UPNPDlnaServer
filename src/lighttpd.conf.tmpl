@@ -7,8 +7,8 @@ server.groupname = "nogroup"
 server.force-lowercase-filenames = "disable"
 server.max-keep-alive-requests = 0
 connection.kbytes-per-second = 4096
-server.event-handler = "select"
-server.network-backend = "writev"
+server.event-handler = "linux-sysepoll"
+server.network-backend = "linux-sendfile"
 
 server.modules = ( "mod_alias", "mod_expire" )
 
