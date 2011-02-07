@@ -15,11 +15,7 @@ namespace MediaServer.Configuration
 
 		#region Singleton
 
-		private static readonly Settings SingletonInstance = new Settings();
-
-		static Settings()
-		{
-		}
+		private static readonly Lazy<Settings> SingletonInstance = new Lazy<Settings>(() => new Settings());
 
 		#endregion
 
@@ -42,7 +38,7 @@ namespace MediaServer.Configuration
 		{
 			get
 			{
-				return SingletonInstance;
+				return SingletonInstance.Value;
 			}
 		}
 

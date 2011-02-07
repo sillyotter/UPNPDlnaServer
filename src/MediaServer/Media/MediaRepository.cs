@@ -21,16 +21,14 @@ namespace MediaServer.Media
 			new ReadWriteLockedCache<Guid, MediaNode>();
 		
 		#region Singleton
-		private static readonly MediaRepository SingletonInstance = new MediaRepository();
+		private static readonly Lazy<MediaRepository> SingletonInstance = new Lazy<MediaRepository>(() => new MediaRepository());
 		public static MediaRepository Instance
 		{
 			get
 			{
-				return SingletonInstance;
+				return SingletonInstance.Value;
 			}
 		}
-
-		static MediaRepository() { }
 
 		#endregion
 

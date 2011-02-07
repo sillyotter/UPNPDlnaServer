@@ -13,17 +13,15 @@ namespace MediaServer.Web
 		private Process _proc;
 
 		#region Singleton
-		private static readonly Lighttpd SingletonInstance = new Lighttpd();
+		private static readonly Lazy<Lighttpd> SingletonInstance = new Lazy<Lighttpd>(() => new Lighttpd());
 
 		public static Lighttpd Instance
 		{
 			get
 			{
-				return SingletonInstance;
+				return SingletonInstance.Value;
 			}
 		}
-
-		static Lighttpd() { }
 
 		#endregion
 

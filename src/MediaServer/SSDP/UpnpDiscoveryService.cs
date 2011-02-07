@@ -12,13 +12,9 @@ namespace MediaServer.SSDP
 	{
 #region Singleton
 
-		static UpnpDiscoveryService()
-		{
-		}
+		private static readonly Lazy<UpnpDiscoveryService> SingletonInstance = new Lazy<UpnpDiscoveryService>(() => new UpnpDiscoveryService());
 
-		private static readonly UpnpDiscoveryService SingletonInstance = new UpnpDiscoveryService();
-
-		public static UpnpDiscoveryService Instance { get { return SingletonInstance; } }
+		public static UpnpDiscoveryService Instance { get { return SingletonInstance.Value; } }
 
 #endregion
 

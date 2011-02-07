@@ -25,18 +25,16 @@ namespace MediaServer.Utility
 
 		#region Singleton
 
-		private static readonly Logger SingletonInstance = new Logger();
+		private static readonly Lazy<Logger> SingletonInstance = new Lazy<Logger>(() => new Logger());
 
 		public static Logger Instance
 		{
 			get
 			{
-				return SingletonInstance;
+				return SingletonInstance.Value;
 			}
 		}
         
-		static Logger() { }
-
 		#endregion
 
 		public void Initialize(string path, LogLevel logLevel)

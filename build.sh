@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# to do: check on dir creates, only configure/rebild lightppd if needed
+# add a -aot pass on exe and dll first
+# do lots of cool scripty things in here to make it do the right thing
+# and print out messages saying what that is
+
 mkdir bin
 
 cd support
