@@ -13,6 +13,7 @@ function test_and_create_directory() {
 }
 
 function clean() {
+	echo "Cleaning..."
 	rm -rf support/lighttpd-1.4.28
 	rm -rf bin
 	find . -type f -name '*~' -exec rm {} \;
@@ -22,11 +23,11 @@ function build() {
 
 	test_and_create_directory bin
 
-
 	if [ ! -e bin/lighttpd ]
 	then
 		if [ ! -e support/lighttpd-1.4.28 ]
 		then
+			echo "Building lighttpd..."
 			cd support
 			tar xzf lighttpd-1.4.28.tar.gz
 			cd lighttpd-1.4.28
@@ -34,16 +35,20 @@ function build() {
 			./configure --prefix=`pwd`/build > /dev/null 2>&1
 			make install > /dev/null 2>&1
 			cd ../..
-		else
-			mkdir /lighttpd
-			cp -R support/lighttpd-1.4.28/build/* bin/lighttpd
 		fi
+
+		mkdir bin/lighttpd
+		cp -R support/lighttpd-1.4.28/build/* bin/lighttpd
 	fi
 
+
+	echo "Compiling MediaServer..."
 
 	dmcs -recurse:src/MediaServer/*.cs \
 		-reference:System.Xml.Linq.dll,Mono.Posix.dll,taglib-sharp.dll \
 		-lib:lib -out:bin/MediaServer.exe -optimize -target:exe 
+
+	echo "Deploying..."
 
 	cp lib/taglib-sharp.dll bin
 	cp src/lighttpd.conf.tmpl bin
@@ -52,16 +57,22 @@ function build() {
 	test_and_create_directory bin/MediaServer
 	cp -R src/MediaServer/Resources bin/MediaServer
 
-	test_and_create_directory bin/lighttpd
-	cp -R support/lighttpd-1.4.28/build/* bin/lighttpd
-
+	echo "AOT optimization..."
 	cd bin
 	mono --aot --optimize=all *.exe *.dll > /dev/null 2>&1
 	cd ..
 }
 
+function run() {
+	
+	cd bin
+	mono --optimize=all MediaServer.exe Configuration.xml
+
+}
+
 case $1 in 
 	clean) clean ;;
+	run) run ;;
 	*) build ;;
 esac
 
