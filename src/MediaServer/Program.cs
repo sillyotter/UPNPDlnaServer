@@ -21,7 +21,6 @@ namespace MediaServer
 		static void Main(string[] args)
 		{
 			var configFileName = "MediaServer/Configuration.xml";
-			//Thread.Sleep((int)TimeSpan.FromMinutes(2).TotalMilliseconds);
 			string logfileName = null;
 			if (args.Length >= 1)
 			{
