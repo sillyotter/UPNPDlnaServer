@@ -5,10 +5,10 @@
 	</Network>
 	<Storage>
 		<Media>
-			<Dir name="My Movies">/srv/Storage/Media/Movies/</Dir>
-			<iTunes name="Guy's Music">/srv/Storage/Media/GuysiTunes/iTunes Library.xml</iTunes>
-			<iTunes name="Lisa's Music">/srv/Storage/Media/LisasiTunes/iTunes Library.xml</iTunes>
-			<iPhoto name="Pictures">/srv/Storage/Media/Pictures/iPhoto Library/AlbumData.xml</iPhoto>
+			<Dir name="My Movies">/srv/Media/Movies/</Dir>
+			<iTunes name="Guy's Music">/srv/Media/GuysiTunes/iTunes Library.xml</iTunes>
+			<iTunes name="Lisa's Music">/srv/Media/LisasiTunes/iTunes Library.xml</iTunes>
+			<iPhoto name="Pictures">/srv/Media/Pictures/iPhoto Library/AlbumData.xml</iPhoto>
 		</Media>
 	</Storage>
 	<Icons movie="MovieIcon.png" music="MusicIcon.png" image="ImageIcon.png" server="ServerIcon.png" />
