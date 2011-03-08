@@ -1,5 +1,5 @@
 #!/bin/bash
 
-mono --optimize=all MediaServer.exe Configuration.xml
+exec mono --optimize=all MediaServer.exe Configuration.xml
 
 
