@@ -69,7 +69,7 @@ namespace MediaServer.Media.Nodes
 
 			var dirs =
 				from item in Directory.GetDirectories(_location)
-				where !item.StartsWith(".")
+				where !Path.GetFileName(item).StartsWith(".")
 				select new FilesystemFolderNode(this, Path.GetFileName(item), item);
 			
 			var mediaFiles =
