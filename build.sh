@@ -45,11 +45,12 @@ function build() {
 	echo "Compiling MediaServer..."
 
 	dmcs -recurse:src/MediaServer/*.cs \
-		-reference:System.Xml.Linq.dll,Mono.Posix.dll,taglib-sharp.dll \
+		-reference:System.Web.dll,System.Xml.Linq.dll,Mono.Posix.dll,taglib-sharp.dll \
 		-lib:lib -out:bin/MediaServer.exe -optimize -target:exe 
 
 	echo "Deploying..."
 
+	cp src/start.sh bin
 	cp lib/taglib-sharp.dll bin
 	cp src/lighttpd.conf.tmpl bin
 	cp src/MediaServer/Configuration.xml bin
@@ -70,9 +71,16 @@ function run() {
 
 }
 
+function deploy() {
+	stop MediaServer
+	cp -R bin/* /opt/MediaServer/
+	start MediaServer
+}
+
 case $1 in 
 	clean) clean ;;
 	run) run ;;
+	deploy) deploy ;;
 	*) build ;;
 esac
 
