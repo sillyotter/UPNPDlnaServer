@@ -6,8 +6,8 @@
 	<Storage>
 		<Media>
 			<Dir name="My Movies">/srv/Media/Movies/</Dir>
-			<iTunes name="Guy's Music">/srv/Media/GuysiTunes/iTunes Library.xml</iTunes>
-			<iTunes name="Lisa's Music">/srv/Media/LisasiTunes/iTunes Library.xml</iTunes>
+			<Dir name="Guy's Music">/srv/Media/GuysiTunes/</Dir>
+			<Dir name="Lisa's Music">/srv/Media/LisasiTunes/</Dir>
 			<iPhoto name="Pictures">/srv/Media/Pictures/iPhoto Library/AlbumData.xml</iPhoto>
 		</Media>
 	</Storage>

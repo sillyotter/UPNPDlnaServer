@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -8,6 +9,7 @@ namespace MediaServer.Media.Nodes
 {
 	public class FilesystemFolderNode : FolderNode
 	{
+		private static readonly IEnumerable<string> IgnorableDirectories = new []{"Temporary Items", "Network Trash Folder"};
 		private readonly string _location;
 		private volatile bool _hasBeenScanned;
 		private readonly FileSystemWatcher _watcher;
@@ -37,7 +39,7 @@ namespace MediaServer.Media.Nodes
 			var path = e.FullPath;
 			MediaNode node = null;
 
-			if (Directory.Exists(path))
+			if (Directory.Exists(path) && !IgnorableDirectories.Contains(Path.GetFileName(path)))
 			{
 				node = new FilesystemFolderNode(this, Path.GetFileName(path), path);
 			}
@@ -69,7 +71,8 @@ namespace MediaServer.Media.Nodes
 
 			var dirs =
 				from item in Directory.GetDirectories(_location)
-				where !Path.GetFileName(item).StartsWith(".")
+				let dirname = Path.GetFileName(item)
+				where !dirname.StartsWith(".") && !IgnorableDirectories.Contains(dirname)
 				select new FilesystemFolderNode(this, Path.GetFileName(item), item);
 			
 			var mediaFiles =
