@@ -3,14 +3,14 @@
 	<Network mediaPort="12345" queryPort="54321" />
 	<Icons movie="MovieIcon.png" music="MusicIcon.png" image="ImageIcon.png" server="ServerIcon.png" />
 	<Directory name="My Movies" path="/srv/Media/Movies"/>
-	<iTunes name="Guy's Music" path="/srv/Media/GuysiTunes/">
-		<Remap src="/Users/guyoliver/Music/iTunes/" dest="/srv/Media/GuysiTunes"/>
+	<iTunes name="Guy's Music" path="/srv/Media/GuysiTunes/iTunes Music Library.xml">
+		<Remap src="/Users/guyoliver/Music/iTunes/" dest="/srv/Media/GuysiTunes/"/>
 	</iTunes>
-	<iTunes name="Lisa's Music" path="/srv/Media/LisasiTunes/">
-		<Remap src="/Users/lisaoliver/Music/iTunes/" dest="/srv/Media/LisasiTunes"/>
+	<iTunes name="Lisa's Music" path="/srv/Media/LisasiTunes/iTunes Music Library.xml">
+		<Remap src="/Users/lisaoliver/Music/iTunes/" dest="/srv/Media/LisasiTunes/"/>
 	</iTunes>
 	<iPhoto name="Pictures" path="/srv/Media/Pictures/iPhoto Library/AlbumData.xml">
-		<Remap src="/Users/guyoliver/public/iPhoto/" dest="/srv/Media/Pictures/iPhoto"/>
+		<Remap src="/Users/guyoliver/Public/iPhoto Library/" dest="/srv/Media/Pictures/iPhoto Library/"/>
 	</iPhoto>
 </Configuration>
 

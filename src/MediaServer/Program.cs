@@ -47,9 +47,9 @@ namespace MediaServer
 			lighttpd.DocRoot = Settings.Instance.StaticResources;
 
 			var itunesQuery = from item in Settings.Instance.iTunesFolders
-				select item.Path;
+				select Path.GetDirectoryName(item.Path);
 			var iphotoQuery = from item in Settings.Instance.iPhotoFolders
-				select item.Path;
+				select Path.GetDirectoryName(item.Path);
 			var imageQuery = from item in Settings.Instance.MediaFolders
 				select item.Path;
 
