@@ -9,7 +9,7 @@ namespace MediaServer.Media.Nodes
 {
 	public class FilesystemFolderNode : FolderNode
 	{
-		private static readonly IEnumerable<string> IgnorableDirectories = new []{"Temporary Items", "Network Trash Folder"};
+		private static readonly IEnumerable<string> IgnorableDirectories = new []{"Temporary Items", "Network Trash Folder", ".AppleDouble"};
 		private readonly string _location;
 		private volatile bool _hasBeenScanned;
 		private readonly FileSystemWatcher _watcher;

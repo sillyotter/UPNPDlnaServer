@@ -6,7 +6,7 @@
 	<iTunes name="Guy's Music" path="/srv/Media/GuysiTunes/iTunes Music Library.xml">
 		<Remap src="/Users/guyoliver/Music/iTunes/" dest="/srv/Media/GuysiTunes/"/>
 	</iTunes>
-	<iTunes name="Lisa's Music" path="/srv/Media/LisasiTunes/iTunes Music Library.xml">
+	<iTunes name="Lisa's Music" path="/srv/Media/LisasiTunes/iTunes Library.xml">
 		<Remap src="/Users/lisaoliver/Music/iTunes/" dest="/srv/Media/LisasiTunes/"/>
 	</iTunes>
 	<iPhoto name="Pictures" path="/srv/Media/Pictures/iPhoto Library/AlbumData.xml">
