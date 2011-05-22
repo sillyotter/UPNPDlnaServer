@@ -178,6 +178,10 @@ namespace MediaServer.Media.Nodes
 				var comment = (string)image.Element("Comment");
 				var titleStr = !String.IsNullOrEmpty(comment) ? comment : title;
 
+				System.Console.WriteLine(imagePath);
+				System.Console.WriteLine(_remap.Source);
+				System.Console.WriteLine(_remap.Destination);
+				System.Console.WriteLine(imagePath.Replace(_remap.Source, _remap.Destination));
 				var file = FileNode.Create(folder, titleStr, imagePath.Replace(_remap.Source, _remap.Destination));
 				
 				folder.Add(file);
