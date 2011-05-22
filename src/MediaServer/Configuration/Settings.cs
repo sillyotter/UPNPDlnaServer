@@ -144,7 +144,7 @@ namespace MediaServer.Configuration
 		{
 			Network = new NetworkConfiguration();
 			Icons = new IconConfiguration();
-			Media = new List<Directory>();
+			Media = new List<NamedPathMediaElememnt>();
 		}
 
 		public NetworkConfiguration Network { get; private set; }
@@ -155,7 +155,7 @@ namespace MediaServer.Configuration
 			XmlElement(typeof(iTunes), ElementName="iTunes"),
 			XmlElement(typeof(iPhoto), ElementName="iPhoto")
 		]
-		public List<Directory> Media { get; private set; }
+		public List<NamedPathMediaElememnt> Media { get; private set; }
 	}
 
 	sealed class Settings
