@@ -11,11 +11,13 @@ namespace MediaServer.Media.Nodes
 	{
 		private readonly string _source;
 		private readonly FileSystemWatcher _watcher = new FileSystemWatcher();
+		private readonly MediaServer.Configuration.RemapConfiguration _remap;
 		
-		public iPhotoFolderNode(FolderNode parentNode, string title, string source) 
+		public iPhotoFolderNode(FolderNode parentNode, string title, string source, MediaServer.Configuration.RemapConfiguration remap) 
 			: base(parentNode, title)
 		{
 			_source = source;
+			_remap = remap;
 			
 			//_watcher.IncludeSubdirectories = false;
 			//_watcher.Path = Path.GetDirectoryName(_source);
@@ -165,7 +167,7 @@ namespace MediaServer.Media.Nodes
 			}
 		}
 		
-		private static void AddImagesToFolder(FolderNode folder, IEnumerable<XElement> imageList)
+		private void AddImagesToFolder(FolderNode folder, IEnumerable<XElement> imageList)
 		{
 			foreach(var image in imageList)
 			{
@@ -176,7 +178,7 @@ namespace MediaServer.Media.Nodes
 				var comment = (string)image.Element("Comment");
 				var titleStr = !String.IsNullOrEmpty(comment) ? comment : title;
 
-				var file = FileNode.Create(folder, titleStr, imagePath);
+				var file = FileNode.Create(folder, titleStr, imagePath.Replace(_remap.Source, _remap.Destination));
 				
 				folder.Add(file);
 

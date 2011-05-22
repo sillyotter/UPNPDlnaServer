@@ -36,23 +36,7 @@ namespace MediaServer.Media.Nodes
 
 		private void OnCreated(object sender, FileSystemEventArgs e)
 		{
-			var path = e.FullPath;
-			MediaNode node = null;
-
-			if (Directory.Exists(path) && !IgnorableDirectories.Contains(Path.GetFileName(path)))
-			{
-				node = new FilesystemFolderNode(this, Path.GetFileName(path), path);
-			}
-			else if (File.Exists(path))
-			{
-				if (String.IsNullOrEmpty(UpnpTypeLookup.GetUpnpType(path))) return;
-				node = FileNode.Create(this, path);
-			}
-
-			if (node != null)
-			{
-				Add(node);
-			}
+			_hasBeenScanned = false;
 		}
 
 		public void RemoveAllChildren()

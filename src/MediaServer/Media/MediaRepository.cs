@@ -46,8 +46,8 @@ namespace MediaServer.Media
 		private static bool AddMediaFolders(FolderNode root)
 		{
 			var query = (from item in Settings.Instance.MediaFolders
-			             where Directory.Exists(item.Value)
-			             select new FilesystemFolderNode(root, item.Key, item.Value)).Cast<MediaNode>().ToList();
+			             where System.IO.Directory.Exists(item.Path)
+			             select new FilesystemFolderNode(root, item.Name, item.Path)).Cast<MediaNode>().ToList();
 			
 			if (query.Count() > 0)
 			{
@@ -60,8 +60,8 @@ namespace MediaServer.Media
 		private static bool AddiTunesFolders(FolderNode root)
 		{
 			var query = (from item in Settings.Instance.iTunesFolders
-			             where File.Exists(item.Value)
-			             select new iTunesFolderNode(root, item.Key, item.Value)).Cast<MediaNode>().ToList();
+			             where File.Exists(item.Path)
+			             select new iTunesFolderNode(root, item.Name, item.Path, item.Remap)).Cast<MediaNode>().ToList();
 
 			var count = query.Count();
 			if (count > 0)
@@ -76,8 +76,8 @@ namespace MediaServer.Media
 		private static bool AddiPhotoFolders(FolderNode root)
 		{
 			var query = (from item in Settings.Instance.iPhotoFolders
-			             where File.Exists(item.Value)
-			             select new iPhotoFolderNode(root, item.Key, item.Value)).Cast<MediaNode>().ToList();
+			             where File.Exists(item.Path)
+			             select new iPhotoFolderNode(root, item.Name, item.Path, item.Remap)).Cast<MediaNode>().ToList();
 
 			var count = query.Count();
 			if (count > 0)

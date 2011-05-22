@@ -5,10 +5,159 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using System.Xml;
+using System.Xml.Serialization;
 using MediaServer.Utility;
 
 namespace MediaServer.Configuration
 {
+	public class NetworkConfiguration
+	{
+		public NetworkConfiguration() : this(12345, 54321)
+		{
+		}
+
+		public NetworkConfiguration(int mediaPort, int queryPort)
+		{
+			MediaPort = mediaPort;
+			QueryPort = queryPort;
+		}
+
+		[XmlAttribute("mediaPort")]
+		public int MediaPort { get; private set; }
+
+		[XmlAttribute("queryPort")]
+		public int QueryPort { get; private set; }
+	}
+
+	abstract public class NamedPathMediaElememnt
+	{
+		public NamedPathMediaElememnt() : this("Unknown", "Unknown")
+		{
+		}
+
+		public NamedPathMediaElememnt(string name, string path)
+		{
+			Name = name;
+			Path = path;
+		}
+
+		[XmlAttribute("name")]
+		public string Name { get; private set; }
+
+		[XmlAttribute("path")]
+		public string Path { get; private set; }
+	}
+
+	public class Directory : NamedPathMediaElememnt
+	{
+		public Directory() : base()
+		{
+		}
+
+		public Directory(string name, string path) : base(name, path)
+		{
+		}
+
+	}
+
+	public class RemapConfiguration
+	{
+		public RemapConfiguration()
+		{
+			Source = null;
+			Destination = null;
+		}
+		public RemapConfiguration(string source, string destination)
+		{
+			Source = source;
+			Destination = destination;
+		}
+		
+		[XmlAttribute("src")]
+		public string Source { get; private set; }
+
+		[XmlAttribute("dest")]
+		public string Destination { get; private set; }
+	}
+
+	public class iTunes : NamedPathMediaElememnt
+	{
+		public iTunes() : base() 
+		{
+		}
+
+		public iTunes(string name, string path) : base (name, path)
+		{
+		}
+
+		public RemapConfiguration Remap { get; private set; }
+	}
+
+	public class iPhoto : NamedPathMediaElememnt
+	{
+		public iPhoto() : base()
+		{
+		}
+
+		public iPhoto(string name, string path) : base (name, path)
+		{
+		}
+
+		public RemapConfiguration Remap { get; private set; }
+	}
+
+	public class IconConfiguration
+	{
+		public IconConfiguration()
+		{
+			Movie = "MovieIcon.png";
+			Music = "MusicIcon.png";
+			Image = "ImageIcon.png";
+			Server = "ServerIcon.png";
+		}
+
+		public IconConfiguration(string movie, string music, string image, string server)
+		{
+			Movie = movie;
+			Music = music;
+			Image = image;
+			Server = server;
+		}
+
+		[XmlAttribute("movie")]
+		public string Movie { get; private set; }
+
+		[XmlAttribute("music")]
+		public string Music { get; private set; }
+
+		[XmlAttribute("image")]
+		public string Image { get; private set; }
+
+		[XmlAttribute("server")]
+		public string Server { get; private set; }
+	}
+
+	public class Configuration
+	{
+		public Configuration() 
+		{
+			Network = new NetworkConfiguration();
+			Icons = new IconConfiguration();
+			Media = new List<Directory>();
+		}
+
+		public NetworkConfiguration Network { get; private set; }
+		public IconConfiguration Icons { get; private set; }
+
+		[
+			XmlElement(typeof(Directory), ElementName="Directory"),
+			XmlElement(typeof(iTunes), ElementName="iTunes"),
+			XmlElement(typeof(iPhoto), ElementName="iPhoto")
+		]
+		public List<Directory> Media { get; private set; }
+	}
+
 	sealed class Settings
 	{
 		private static readonly XNamespace Ns = "urn:schemas-upnp-org:device-1-0";
@@ -19,19 +168,13 @@ namespace MediaServer.Configuration
 
 		#endregion
 
-		private readonly IDictionary<string,string> _mediaFolders = new Dictionary<string,string>();
-		private readonly IDictionary<string,string> _itunesLibraries = new Dictionary<string,string>();
-		private readonly IDictionary<string,string> _iphotoLibraries = new Dictionary<string,string>();
 		private readonly FileSystemWatcher _watcher = new FileSystemWatcher();
+		private Configuration _configuration = new Configuration();
 
 		public event EventHandler<EventArgs> ConfigurationChanged;
 
 		private Settings()
 		{
-			MovieIcon = "MovieIcon.png";
-			ImageIcon = "ImageIcon.png";
-			MusicIcon = "MusicIcon.png";
-			ServerIcon = "ServerIcon.png";	
 		}
 
 		public static Settings Instance
@@ -44,8 +187,6 @@ namespace MediaServer.Configuration
 
 		public void LoadConfigurationFile(string filename)
 		{
-			//Logger.Instance.Info("Loading configuration file {0}", filename);
-			
 			ProcessFile(filename);
 
 			_watcher.IncludeSubdirectories = false;
@@ -67,17 +208,11 @@ namespace MediaServer.Configuration
 
 		private void ProcessFile(string filename)
 		{
-			_mediaFolders.Clear();
-			_iphotoLibraries.Clear();
-			_itunesLibraries.Clear();
-
-			var configDoc = XDocument.Load(filename);
-
-			LoadPortSettings(configDoc);
-			LoadMediaFolders(configDoc);
-			LoadiTunesFiles(configDoc);
-			LoadiPhotoFiles(configDoc);
-			LoadIcons(configDoc);
+			using (var fs = new FileStream(filename, FileMode.Open))
+			{
+				var serializer = new XmlSerializer(typeof(Configuration));
+				_configuration = (Configuration)serializer.Deserialize(fs);
+			}
 			GetDeviceIdAndName();
 		}
 
@@ -127,105 +262,11 @@ namespace MediaServer.Configuration
 			FriendlyName = name ?? "Media Server";	
 		}
 
-		private void LoadIcons(XContainer configDoc)
-		{
-			var iconQuery = from item in configDoc.Descendants("Icons")
-			                let movie = item.Attribute("movie")
-			                let movieName = movie == null ? "MovieIcon.png" : ((string)movie).Trim()
-			                let music = item.Attribute("music")
-			                let musicName = movie == null ? "MusicIcon.png" : ((string)music).Trim()
-			                let image = item.Attribute("image")
-			                let imageName = image == null ? "ImageIcon.png" : ((string)image).Trim()
-			                let server = item.Attribute("server")
-			                let serverName = server == null ? "ServerIcon.png" : ((string)server).Trim()
-			                select new { Movie = movieName, Music = musicName, Image = imageName, Server = serverName };
-				
-			var icons = iconQuery.FirstOrDefault();
-			
-			if (icons == null) return;
-			
-			MovieIcon = icons.Movie;
-			MusicIcon = icons.Music;
-			ImageIcon = icons.Image;
-			ServerIcon = icons.Server;
-		}
-
-		private void LoadiPhotoFiles(XContainer configDoc)
-		{
-			LoadNamedMediaEntrys(configDoc, "iPhoto", _iphotoLibraries);
-		}
-
-		private void LoadiTunesFiles(XContainer configDoc)
-		{
-			LoadNamedMediaEntrys(configDoc, "iTunes", _itunesLibraries);
-		}
-		
-		private void LoadMediaFolders(XContainer configDoc)
-		{
-			LoadNamedMediaEntrys(configDoc, "Dir", _mediaFolders);
-		}
-
-		private class KeyComparer : IEqualityComparer<KeyValuePair<string, string>>
-		{
-			#region Implementation of IEqualityComparer<KeyValuePair<string,string>>
-
-			public bool Equals(KeyValuePair<string, string> x, KeyValuePair<string, string> y)
-			{
-				return x.Key.Equals(y.Key);
-			}
-
-			public int GetHashCode(KeyValuePair<string, string> obj)
-			{
-				return obj.Key.GetHashCode();
-			}
-
-			#endregion
-		}
-
-		private static void LoadNamedMediaEntrys(XContainer configDoc, string itemname, ICollection<KeyValuePair<string, string>> target)
-		{
-			var query = (from store in configDoc.Descendants("Storage")
-			             from media in store.Elements("Media")
-			             from tunes in media.Elements(itemname)
-			             let nameNode = tunes.Attribute("name")
-			             let name = nameNode == null ? "" : ((string)nameNode).Trim()
-			             let path = ((string)tunes).Trim()
-			             where !String.IsNullOrEmpty(name) && !String.IsNullOrEmpty(path)
-			             select new KeyValuePair<string, string>(name, path)).Distinct(new KeyComparer());
-
-			foreach (var item in query)
-			{
-				target.Add(item);
-			}
-		}
-
-		private void LoadPortSettings(XContainer configDoc)
-		{
-			var portQuery =
-				from item in configDoc.Elements("Network")
-				let portNode = item.Element("QueryPort")
-				where portNode != null && !String.IsNullOrEmpty((string) portNode) &&
-				      Regex.IsMatch((string) portNode, "^[0-9]+$")
-				select ((string)portNode).Trim();
-
-			int port;
-			QueryPort = int.TryParse(portQuery.FirstOrDefault(), out port) ? port : 12345;
-
-			portQuery =
-				from item in configDoc.Elements("Network")
-				let portNode = item.Element("MediaPort")
-				where portNode != null && !String.IsNullOrEmpty((string) portNode) &&
-				      Regex.IsMatch((string) portNode, "^[0-9]+$")
-				select ((string)portNode).Trim();
-
-			MediaPort = int.TryParse(portQuery.FirstOrDefault(), out port) ? port : 54321;
-		}
-
 		public string ServerName { get { return "MacOSX UPnP/1.0 GUPNPMS/0.1"; } }
 		public string FriendlyName { get; private set; }
 		public Guid DeviceId { get; private set; }
-		public int QueryPort { get; private set; }
-		public int MediaPort { get; private set; }
+		public int QueryPort { get { return _configuration.Network.QueryPort;  } }
+		public int MediaPort { get { return _configuration.Network.MediaPort;  } }
 		public string StaticResources 
 		{
 	 		get
@@ -234,31 +275,31 @@ namespace MediaServer.Configuration
 			}
 		}		
 
-		public string MovieIcon { get; private set; }
-		public string ImageIcon { get; private set; }
-		public string MusicIcon { get; private set; }
-		public string ServerIcon { get; private set; }
+		public string MovieIcon { get { return _configuration.Icons.Movie; }}
+		public string ImageIcon { get { return _configuration.Icons.Image; }}
+		public string MusicIcon { get { return _configuration.Icons.Music; }}
+		public string ServerIcon { get { return _configuration.Icons.Server; }}
 		
-		public IDictionary<string,string> iTunesFolders
+		public IEnumerable<iTunes> iTunesFolders
 		{
 			get
 			{
-				return _itunesLibraries;
+				return _configuration.Media.OfType<iTunes>();
 			}
 		}
-		public IDictionary<string,string> iPhotoFolders
+		public IEnumerable<iPhoto> iPhotoFolders
 		{
 			get
 			{
-				return _iphotoLibraries;
+				return _configuration.Media.OfType<iPhoto>();
 			}
 		}
 
-		public IDictionary<string,string> MediaFolders
+		public IEnumerable<Directory> MediaFolders
 		{
 			get
 			{
-				return _mediaFolders;
+				return _configuration.Media.OfType<Directory>();
 			}
 		}
 	}

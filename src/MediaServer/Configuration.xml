@@ -1,15 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Configuration>
-	<Network>
-		<Port>12345</Port>
-	</Network>
-	<Storage>
-		<Media>
-			<Dir name="My Movies">/srv/Media/Movies/</Dir>
-			<Dir name="Guy's Music">/srv/Media/GuysiTunes/</Dir>
-			<Dir name="Lisa's Music">/srv/Media/LisasiTunes/</Dir>
-			<iPhoto name="Pictures">/srv/Media/Pictures/iPhoto Library/AlbumData.xml</iPhoto>
-		</Media>
-	</Storage>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<Network mediaPort="12345" queryPort="54321" />
 	<Icons movie="MovieIcon.png" music="MusicIcon.png" image="ImageIcon.png" server="ServerIcon.png" />
+	<Directory name="My Movies" path="/srv/Media/Movies"/>
+	<iTunes name="Guy's Music" path="/srv/Media/GuysiTunes/">
+		<Remap src="/Users/guyoliver/Music/iTunes/" dest="/srv/Media/GuysiTunes"/>
+	</iTunes>
+	<iTunes name="Lisa's Music" path="/srv/Media/LisasiTunes/">
+		<Remap src="/Users/lisaoliver/Music/iTunes/" dest="/srv/Media/LisasiTunes"/>
+	</iTunes>
+	<iPhoto name="Pictures" path="/srv/Media/Pictures/iPhoto Library/AlbumData.xml">
+		<Remap src="/Users/guyoliver/public/iPhoto/" dest="/srv/Media/Pictures/iPhoto"/>
+	</iPhoto>
 </Configuration>
+

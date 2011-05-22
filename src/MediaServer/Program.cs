@@ -47,13 +47,15 @@ namespace MediaServer
 			lighttpd.DocRoot = Settings.Instance.StaticResources;
 
 			var itunesQuery = from item in Settings.Instance.iTunesFolders
-				select new KeyValuePair<string,string>(item.Key, Path.GetDirectoryName(item.Value));
+				select item.Path;
 			var iphotoQuery = from item in Settings.Instance.iPhotoFolders
-				select new KeyValuePair<string,string>(item.Key, Path.GetDirectoryName(item.Value));
+				select item.Path;
+			var imageQuery = from item in Settings.Instance.MediaFolders
+				select item.Path;
 
-			foreach (var item in Settings.Instance.MediaFolders.Union(itunesQuery).Union(iphotoQuery))
+			foreach (var item in imageQuery.Union(itunesQuery).Union(iphotoQuery))
 			{
-				lighttpd.UrlMapping[item.Value] = item.Value;
+				lighttpd.UrlMapping[item] = item;
 			}
 
 			lighttpd.Start();

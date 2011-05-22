@@ -11,11 +11,13 @@ namespace MediaServer.Media.Nodes
 	{
 		private readonly string _source;
 		private readonly FileSystemWatcher _watcher = new FileSystemWatcher();
+		private readonly MediaServer.Configuration.RemapConfiguration _remap;
 		
-		public iTunesFolderNode(FolderNode parentNode, string title, string source) 
+		public iTunesFolderNode(FolderNode parentNode, string title, string source, MediaServer.Configuration.RemapConfiguration remap) 
 			: base(parentNode, title)
 		{
 			_source = source;
+			_remap = remap;
 			
 			//_watcher.IncludeSubdirectories = false;
 			//_watcher.Path = Path.GetDirectoryName(_source);
@@ -73,7 +75,7 @@ namespace MediaServer.Media.Nodes
 				.ThenBy(item => (string)item.Element("TrackNumber"));
 		}
 
-		private static void AddSubFolder(FolderNode root, XContainer source, string type)
+		private void AddSubFolder(FolderNode root, XContainer source, string type)
 		{
 			var name = type + "s";
 			var newFolder = new FolderNode(root, name);
@@ -86,7 +88,7 @@ namespace MediaServer.Media.Nodes
 			}
 		}
 		
-		private static void AddMedia(FolderNode root, string newFolderName, IEnumerable<XElement> source)
+		private void AddMedia(FolderNode root, string newFolderName, IEnumerable<XElement> source)
 		{
 			var newFolder = new FolderNode(root, newFolderName);
 			root.Add(newFolder);
@@ -102,7 +104,8 @@ namespace MediaServer.Media.Nodes
 
 					var title = (string)track.Element("Name");
 
-					var file = !String.IsNullOrEmpty(title) ? FileNode.Create(newFolder, title, path) : FileNode.Create(newFolder, Path.GetFileNameWithoutExtension(path), path);
+					var file = !String.IsNullOrEmpty(title) ? FileNode.Create(newFolder, title, path.Replace(_remap.Source, _remap.Destination)) : 
+						FileNode.Create(newFolder, Path.GetFileNameWithoutExtension(path), path.Replace(_remap.Source, _remap.Destination));
 
 					newFolder.Add(file);
 
