@@ -3,13 +3,7 @@ The below notes are old.  New ones up top
 ---
 
 
-on start up, dont initialize right away, sleep fora bit?
-
-can I fire up the onlune resources with out firing up 100 threads.  well, 23 or so anyhow
-
 itunes parsing is still way too slow.  And may be broken now
-
-web wrapper creation, especially picasa, no, only picassa, is really slow.
 
 add decent command line parsing to the thing.  
 
