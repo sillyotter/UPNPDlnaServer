@@ -28,7 +28,7 @@ namespace MediaServer.Media.Nodes
 					new XAttribute("parentID", ParentId),
 					new XAttribute("childCount", 0),
 					new XAttribute("restricted", true),
-					new XElement(Dc + "title", new XText(HttpUtility.HtmlEncode(Title))),
+					new XElement(Dc + "title", new XText(Title)),
 					new XElement(Upnp + "class", new XText(Class)),
 					new XElement(
 						Upnp + "albumArtURI",
