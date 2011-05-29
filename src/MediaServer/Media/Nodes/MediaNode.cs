@@ -12,7 +12,6 @@ namespace MediaServer.Media.Nodes
 		protected static readonly XNamespace Upnp = "urn:schemas-upnp-org:metadata-1-0/upnp/";
 		protected static readonly XNamespace Dlna = "urn:schemas-dlna-org:metadata-1-0/";
 		
-		//static long _count = 0;
 		protected MediaNode(FolderNode parentNode)
 		{
 			Id = parentNode == null ? Guid.Empty : Guid.NewGuid();
