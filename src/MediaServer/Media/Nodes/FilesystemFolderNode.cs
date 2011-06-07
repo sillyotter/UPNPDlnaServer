@@ -9,7 +9,8 @@ namespace MediaServer.Media.Nodes
 {
 	public class FilesystemFolderNode : FolderNode
 	{
-		private static readonly IEnumerable<string> IgnorableDirectories = new []{"Temporary Items", "Network Trash Folder", ".AppleDouble"};
+		private static readonly IEnumerable<string> IgnorableDirectories = 
+			new []{"Temporary Items", "Network Trash Folder", ".AppleDouble"};
 		private readonly string _location;
 		private volatile bool _hasBeenScanned;
 		private readonly FileSystemWatcher _watcher;
@@ -55,7 +56,7 @@ namespace MediaServer.Media.Nodes
 
 			var dirs =
 				from item in Directory.GetDirectories(_location)
-				let dirname = Path.GetFileName(item)
+				let dirname = item.Split(Path.DirectorySeparatorChar).Last()
 				where !dirname.StartsWith(".") && !IgnorableDirectories.Contains(dirname)
 				select new FilesystemFolderNode(this, Path.GetFileName(item), item);
 			
