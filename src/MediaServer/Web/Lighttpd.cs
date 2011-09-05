@@ -37,28 +37,32 @@ namespace MediaServer.Web
 
 		private void CreateConfigurationFile(string tfn)
 		{
-			var tmplPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "lighttpd.conf.tmpl");
-			var tmplText = File.ReadAllText(tmplPath);
-
-			var msb = new StringBuilder();
-			var asb = new StringBuilder();
-
-			foreach(var item in MimeTypeLookup.GetAllMappings())
+			var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			if (path != null)
 			{
-				msb.AppendFormat("\".{0}\" => \"{1}\",", item.Key, item.Value).AppendLine();
+				var tmplPath = Path.Combine(path, "lighttpd.conf.tmpl");
+				var tmplText = File.ReadAllText(tmplPath);
+
+				var msb = new StringBuilder();
+				var asb = new StringBuilder();
+
+				foreach(var item in MimeTypeLookup.GetAllMappings())
+				{
+					msb.AppendFormat("\".{0}\" => \"{1}\",", item.Key, item.Value).AppendLine();
+				}
+
+				foreach (var item in UrlMapping)
+				{
+					asb.AppendFormat("alias.url += ( \"{0}\" => \"{1}\" )", item.Key, item.Value ).AppendLine();
+				}
+
+				tmplText = tmplText.Replace("{{docroot}}", DocRoot);
+				tmplText = tmplText.Replace("{{port}}", Port.ToString());
+				tmplText = tmplText.Replace("{{mimetypes}}", msb.ToString());
+				tmplText = tmplText.Replace("{{aliases}}", asb.ToString());
+
+				File.WriteAllText(tfn, tmplText);
 			}
-
-			foreach (var item in UrlMapping)
-			{
-				asb.AppendFormat("alias.url += ( \"{0}\" => \"{1}\" )", item.Key, item.Value ).AppendLine();
-			}
-
-			tmplText = tmplText.Replace("{{docroot}}", DocRoot);
-			tmplText = tmplText.Replace("{{port}}", Port.ToString());
-			tmplText = tmplText.Replace("{{mimetypes}}", msb.ToString());
-			tmplText = tmplText.Replace("{{aliases}}", asb.ToString());
-
-			File.WriteAllText(tfn, tmplText);
 		}
 
 		public void Start()
@@ -71,27 +75,31 @@ namespace MediaServer.Web
 
 					CreateConfigurationFile(cf);
 
-					var exepath = 
-						Path.Combine(
+					var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+					if (path != null)
+					{
+						var exepath =
 							Path.Combine(
 								Path.Combine(
-									Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-									"lighttpd"),
-								"sbin"),
-							"lighttpd");
+									Path.Combine(
+										path,
+										"lighttpd"),
+									"sbin"),
+								"lighttpd");
 
-					var modpath = 
-						Path.Combine(
+						var modpath =
 							Path.Combine(
-								Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-								"lighttpd"),
-							"lib");
+								Path.Combine(
+									path,
+									"lighttpd"),
+								"lib");
 
 
 
-					var cmdLine = String.Format("-D -m {0} -f {1}", modpath, cf);
-						
-					_proc = Process.Start(exepath, cmdLine);
+						var cmdLine = String.Format("-D -m {0} -f {1}", modpath, cf);
+
+						_proc = Process.Start(exepath, cmdLine);
+					}
 				}
 			}
 		}

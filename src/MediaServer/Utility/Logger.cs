@@ -34,7 +34,7 @@ namespace MediaServer.Utility
 				return SingletonInstance.Value;
 			}
 		}
-        
+		
 		#endregion
 
 		public void Initialize(string path, LogLevel logLevel)
@@ -100,11 +100,11 @@ namespace MediaServer.Utility
 			if (msgType > LogLogLevel) return;
 			var now = DateTime.Now;
 			_context.PostDelegateToThread( () => 
-			                               	{
-			                               		_output.WriteLine(String.Format("<event time=\"{0}\" type=\"{1}\">\n{2}\n</event>", 
-			                               		                                now.ToString("O"), msgType, message));
-			                               		_output.Flush();
-			                               	});
+											{
+												_output.WriteLine(String.Format("<event time=\"{0}\" type=\"{1}\">\n{2}\n</event>", 
+																				now.ToString("O"), msgType, message));
+												_output.Flush();
+											});
 		}
 
 	}

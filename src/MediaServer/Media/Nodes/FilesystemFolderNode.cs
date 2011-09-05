@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -66,7 +65,7 @@ namespace MediaServer.Media.Nodes
 				where !filename.StartsWith(".") && UpnpTypeLookup.IsValidExtension(Path.GetExtension(filename))
 				select FileNode.Create(this, item);
 
-			AddRange(dirs.Cast<MediaNode>().Concat(mediaFiles.Cast<MediaNode>()).ToList());
+			AddRange(dirs.Concat(mediaFiles.Cast<MediaNode>()).ToList());
 		}
 
 		public override XElement RenderMetadata(IPEndPoint queryEndpoint, IPEndPoint mediaEndpoint)

@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Xml.Linq;
 using MediaServer.Configuration;
 using MediaServer.Media.Nodes;
@@ -37,13 +36,13 @@ namespace MediaServer.Media
 			//Settings.Instance.ConfigurationChanged += OnConfigurationChanged;
 		}
 
-		private void OnConfigurationChanged(object sender, EventArgs e)
-		{
-			Logger.Instance.Info("Configuration file changed, reloading media tree structure");
-			Initialize();
-		}
+		//private void OnConfigurationChanged(object sender, EventArgs e)
+		//{
+		//    Logger.Instance.Info("Configuration file changed, reloading media tree structure");
+		//    Initialize();
+		//}
 
-		private static bool AddMediaFolders(FolderNode root)
+		private static void AddMediaFolders(FolderNode root)
 		{
 			var query = (from item in Settings.Instance.MediaFolders
 			             where System.IO.Directory.Exists(item.Path)
@@ -52,12 +51,10 @@ namespace MediaServer.Media
 			if (query.Count() > 0)
 			{
 				root.AddRange(query);
-				return true;
 			}
-			return false;
 		}
 
-		private static bool AddiTunesFolders(FolderNode root)
+		private static void AddiTunesFolders(FolderNode root)
 		{
 			var query = (from item in Settings.Instance.iTunesFolders
 			             where File.Exists(item.Path)
@@ -67,13 +64,10 @@ namespace MediaServer.Media
 			if (count > 0)
 			{
 				root.AddRange(query);
-				return true;
 			}
-			return false;
-
 		}
 
-		private static bool AddiPhotoFolders(FolderNode root)
+		private static void AddiPhotoFolders(FolderNode root)
 		{
 			var query = (from item in Settings.Instance.iPhotoFolders
 			             where File.Exists(item.Path)
@@ -83,12 +77,10 @@ namespace MediaServer.Media
 			if (count > 0)
 			{
 				root.AddRange(query);
-				return true;
 			}
-			return false;
 		}
 
-		private void InternalInitialize(object state)
+		private void InternalInitialize()
 		{
 			_resourceCache.Clear();
 
@@ -109,7 +101,7 @@ namespace MediaServer.Media
 
 		public void Initialize()
 		{
-			InternalInitialize(null);
+			InternalInitialize();
 			//_timer.Change(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(-1));
 		}
 

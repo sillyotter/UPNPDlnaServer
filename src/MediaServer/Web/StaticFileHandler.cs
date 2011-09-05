@@ -45,10 +45,11 @@ namespace MediaServer.Web
 			}
 			else
 			{
-				resp.RedirectLocation = "http://" + req.LocalEndPoint.Address + ":" + Settings.Instance.MediaPort + req.Url.LocalPath;
+				if (req.LocalEndPoint != null)
+					resp.RedirectLocation = "http://" + req.LocalEndPoint.Address + ":" + Settings.Instance.MediaPort + req.Url.LocalPath;
 				resp.StatusCode = (int)HttpStatusCode.MovedPermanently;
 			}
-			resp.OutputStream.Close();
+        	resp.OutputStream.Close();
 		}
 	}
 }

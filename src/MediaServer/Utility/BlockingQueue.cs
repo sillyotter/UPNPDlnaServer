@@ -139,7 +139,7 @@ namespace MediaServer.Utility
 					if (!_enabled) throw new QueueDisabledException();
 				}
 
-               
+			   
 				_queue.Enqueue(item);
 
 				if (_queue.Count == 1)
@@ -195,7 +195,7 @@ namespace MediaServer.Utility
 					if (!_enabled) throw new QueueDisabledException();
 				}
 
-                
+				
 				T item = _queue.Dequeue();
 
 				if (_queue.Count == (_maxCapacity - 1))

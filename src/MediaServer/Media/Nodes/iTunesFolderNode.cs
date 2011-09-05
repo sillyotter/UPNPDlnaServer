@@ -11,9 +11,9 @@ namespace MediaServer.Media.Nodes
 	{
 		private readonly string _source;
 		private readonly FileSystemWatcher _watcher = new FileSystemWatcher();
-		private readonly MediaServer.Configuration.RemapConfiguration _remap;
+		private readonly Configuration.RemapConfiguration _remap;
 		
-		public iTunesFolderNode(FolderNode parentNode, string title, string source, MediaServer.Configuration.RemapConfiguration remap) 
+		public iTunesFolderNode(FolderNode parentNode, string title, string source, Configuration.RemapConfiguration remap) 
 			: base(parentNode, title)
 		{
 			_source = source;
@@ -35,16 +35,16 @@ namespace MediaServer.Media.Nodes
 			parseCommand.BeginInvoke(path, parseCommand.EndInvoke, null);
 		}
 		
-		private void OnChanged(object sender, FileSystemEventArgs args)
-		{
-			_watcher.EnableRaisingEvents = false;
-			foreach(var item in this)
-			{
-				item.RemoveFromIndexes();
-			}
-			Clear();
-			ProcessFileInBackground(_source);
-		}
+		//private void OnChanged(object sender, FileSystemEventArgs args)
+		//{
+		//    _watcher.EnableRaisingEvents = false;
+		//    foreach(var item in this)
+		//    {
+		//        item.RemoveFromIndexes();
+		//    }
+		//    Clear();
+		//    ProcessFileInBackground(_source);
+		//}
 		
 		
 		private static IEnumerable<IGrouping<string,XElement>> GetGroupings(XContainer source, string type)
@@ -196,16 +196,16 @@ namespace MediaServer.Media.Nodes
 				var thirdroot = root.Element("array");
 				if (thirdroot == null) return;
 
-			    var rawPlaylists =
-			        from playlist in thirdroot.Elements("dict")
-			        select new XElement(
-			            "Playlist",
-			            from key in playlist.Elements("key")
-			            let name = ((string) key).Replace(" ", "")
-			            let nextnode = (XElement) key.NextNode
-			            where name == "Name" || name == "PlaylistItems"
-			            select new XElement(name, MergeTrees((string) nextnode, songs)));
-		
+				var rawPlaylists =
+					(from playlist in thirdroot.Elements("dict")
+					 select new XElement(
+					 	"Playlist",
+					 	from key in playlist.Elements("key")
+					 	let name = ((string) key).Replace(" ", "")
+					 	let nextnode = (XElement) key.NextNode
+					 	where name == "Name" || name == "PlaylistItems"
+					 	select new XElement(name, MergeTrees((string) nextnode, songs)))
+					).ToList();
 			
 				var musicPlaylist = 
 					(from item in rawPlaylists

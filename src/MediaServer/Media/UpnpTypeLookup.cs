@@ -63,9 +63,14 @@ namespace MediaServer.Media
 
 		public static string GetUpnpType(string filename)
 		{
-			string result;
-			var ext = Path.GetExtension(filename).ToLower();
-			return UpnpItemTypes.TryGetValue(ext, out result) ? result : String.Empty;
+			var extension = Path.GetExtension(filename);
+			if (extension != null)
+			{
+				var ext = extension.ToLower();
+				string result;
+				return UpnpItemTypes.TryGetValue(ext, out result) ? result : String.Empty;
+			}
+			return String.Empty;
 		}
 
 		public static IEnumerable<string> GetSupportedExtensions()

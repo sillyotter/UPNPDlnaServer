@@ -52,30 +52,34 @@ namespace MediaServer.Web
 
 					if (item.IsOut)
 					{
-					    parameters.Add(item.ParameterType.GetElementType() == typeof (string)
-					                       ? String.Empty
-					                       : Activator.CreateInstance(item.ParameterType.GetElementType()));
+						parameters.Add(item.ParameterType.GetElementType() == typeof (string)
+										   ? String.Empty
+										   : Activator.CreateInstance(item.ParameterType.GetElementType()));
 					}
 					else
 					{
-					    if (invokeData != null)
-					    {
-					        var val = invokeData.Descendants(u + methodName).Elements(name).FirstOrDefault().Value;
-					        if (item.ParameterType == typeof(string))
-					        {
-					            parameters.Add(val);
-					        }
-					        else if (item.ParameterType.IsPrimitive)
-					        {
-					            var data = Convert.ChangeType(val, item.ParameterType);
-					            parameters.Add(data);
-					        }
-					        else if (item.ParameterType.IsEnum)
-					        {
-					            var data = Enum.Parse(item.ParameterType, val);
-					            parameters.Add(data);
-					        }
-					    }
+						if (invokeData != null)
+						{
+							var firstOrDefault = invokeData.Descendants(u + methodName).Elements(name).FirstOrDefault();
+							if (firstOrDefault != null)
+							{
+								var val = firstOrDefault.Value;
+								if (item.ParameterType == typeof(string))
+								{
+									parameters.Add(val);
+								}
+								else if (item.ParameterType.IsPrimitive)
+								{
+									var data = Convert.ChangeType(val, item.ParameterType);
+									parameters.Add(data);
+								}
+								else if (item.ParameterType.IsEnum)
+								{
+									var data = Enum.Parse(item.ParameterType, val);
+									parameters.Add(data);
+								}
+							}
+						}
 					}
 				}
 			}
@@ -86,17 +90,17 @@ namespace MediaServer.Web
 				methodInfo.Invoke(this, ps);
 
 				var outs = names
-					.ZipWith(ps, (a, b) => new { Name = a, Value = b.ToString() })
-					.ZipWith(parametersInfo, (a, b) => new { a.Name, a.Value, b.IsOut })
+					.Zip(ps, (a, b) => new { Name = a, Value = b.ToString() })
+					.Zip(parametersInfo, (a, b) => new { a.Name, a.Value, b.IsOut })
 					.Where(item => item.IsOut);
 
 				var root = new XElement(s + "Envelope",
-				                        new XAttribute(XNamespace.Xmlns + "s", s.ToString()),
-				                        new XAttribute(s + "encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/"),
-				                        new XElement(s + "Body",
-				                                     new XElement(u + methodName + "Response",
-				                                                  new XAttribute(XNamespace.Xmlns + "u", u.ToString()),
-				                                                  from element in outs select new XElement(element.Name, element.Value)))
+										new XAttribute(XNamespace.Xmlns + "s", s.ToString()),
+										new XAttribute(s + "encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/"),
+										new XElement(s + "Body",
+													 new XElement(u + methodName + "Response",
+																  new XAttribute(XNamespace.Xmlns + "u", u.ToString()),
+																  from element in outs select new XElement(element.Name, element.Value)))
 					);
 				return root;
 			}
@@ -107,25 +111,25 @@ namespace MediaServer.Web
 			return null;
 		}
 
-        public override void ProcessRequest(HttpListenerRequest req, HttpListenerResponse resp)
-        {
+		public override void ProcessRequest(HttpListenerRequest req, HttpListenerResponse resp)
+		{
 			if (req.HttpMethod.ToUpper() == "POST")
 			{
 				var action = req.Headers["SOAPACTION"];
 				if (!String.IsNullOrEmpty(action))
 				{
-				    var inputLength = (int)req.ContentLength64;
-				    var buffer = new byte[inputLength];
-                    
-				    req.InputStream.Read(buffer, 0, inputLength);
-
-				    XElement postData;
-                    using (var ms = new MemoryStream(buffer))
-                    {
-                        postData = XElement.Load(XmlReader.Create(ms));
-                    }
+					var inputLength = (int)req.ContentLength64;
+					var buffer = new byte[inputLength];
 					
-				    var localData = Thread.GetNamedDataSlot("localEndPoint");
+					req.InputStream.Read(buffer, 0, inputLength);
+
+					XElement postData;
+					using (var ms = new MemoryStream(buffer))
+					{
+						postData = XElement.Load(XmlReader.Create(ms));
+					}
+					
+					var localData = Thread.GetNamedDataSlot("localEndPoint");
 					Thread.SetData(localData, req.LocalEndPoint);
 					var result = InvokeMethod(action, postData);
 					Thread.FreeNamedDataSlot("localEndPoint");
@@ -143,9 +147,9 @@ namespace MediaServer.Web
 							resp.StatusCode = (int)HttpStatusCode.OK;
 							resp.ContentLength64 = len;
 							resp.ContentType = "text/xml";
-                            resp.Headers.Add("Server", Settings.Instance.ServerName);
-                            resp.Headers.Add("Date", DateTime.Now.ToUniversalTime().ToString("R"));		
-                            resp.Headers.Add("EXT", "");
+							resp.Headers.Add("Server", Settings.Instance.ServerName);
+							resp.Headers.Add("Date", DateTime.Now.ToUniversalTime().ToString("R"));		
+							resp.Headers.Add("EXT", "");
 
 							resp.OutputStream.Write(data, 0, (int)len);
 							resp.OutputStream.Close();
@@ -154,7 +158,7 @@ namespace MediaServer.Web
 					}
 				}
 			}
-            resp.StatusCode = (int)HttpStatusCode.NotFound;
+			resp.StatusCode = (int)HttpStatusCode.NotFound;
 		}
 	}
 }

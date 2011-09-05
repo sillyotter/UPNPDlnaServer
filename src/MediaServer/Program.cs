@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MediaServer.Configuration;
@@ -20,7 +19,11 @@ namespace MediaServer
 	{
 		static void Main(string[] args)
 		{
+#if (WIN32)
+			var configFileName = "Configuration.xml";
+#else
 			var configFileName = "MediaServer/Configuration.xml";
+#endif
 			string logfileName = null;
 			if (args.Length >= 1)
 			{
@@ -33,11 +36,11 @@ namespace MediaServer
 			
 			if (!String.IsNullOrEmpty(logfileName))
 			{
-				//Logger.Instance.Initialize(logfileName, LogLevel.Debug);
+				Logger.Instance.Initialize(logfileName, LogLevel.Debug);
 			}
 			else
 			{
-				//Logger.Instance.LogLogLevel = LogLevel.Debug;
+				Logger.Instance.LogLogLevel = LogLevel.Debug;
 			}
 
 			Settings.Instance.LoadConfigurationFile(configFileName);
@@ -58,8 +61,9 @@ namespace MediaServer
 				lighttpd.UrlMapping[item] = item;
 			}
 
+#if (!WIN32)
 			lighttpd.Start();
-
+#endif
 			MediaRepository.Instance.Initialize();
 
 			var upnplistener = new UpnpMediaServerMessageHandler();

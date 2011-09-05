@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MediaServer.Utility
 {
@@ -12,45 +14,42 @@ namespace MediaServer.Utility
 			public Exception Exception;
 		}
 
-		private readonly BlockingQueue<TaskDescription> _queue = new BlockingQueue<TaskDescription>(1);
-		private readonly Thread _t;
+		private readonly BlockingCollection<TaskDescription> _queue 
+			= new BlockingCollection<TaskDescription>(new ConcurrentQueue<TaskDescription>());
+		private readonly Task _t;
+		private readonly CancellationTokenSource _tokenSource  = new CancellationTokenSource();
 
 		public SingleThreadExecutionContext()
 		{
-			_t = new Thread(Run) {IsBackground = true};
-			_t.Start();
+			_t = Task.Factory.StartNew(Run, _tokenSource.Token, TaskCreationOptions.LongRunning);
 		}
 
 		~SingleThreadExecutionContext()
 		{
-			_queue.Enabled = false;
-			_t.Join();
+			_queue.CompleteAdding();
+			_t.Wait();
 		}
 
-		private void Run()
+		private void Run(object data)
 		{
-			try
+			var token = (CancellationToken) data;
+
+			while (!_queue.IsCompleted && !token.IsCancellationRequested)
 			{
-				while (true)
+				var t = _queue.Take(token);
+
+				try
 				{
-					TaskDescription t = _queue.Dequeue();
-
-					try
-					{
-
-						t.Delegate();
-						t.IsDone.Set();
-					}
-					catch (Exception ex)
-					{
-						t.Exception = ex;
-						t.IsDone.Set();
-					}
+					t.Delegate();
+					t.IsDone.Set();
+				}
+				catch (Exception ex)
+				{
+					t.Exception = ex;
+					t.IsDone.Set();
 				}
 			}
-			catch (QueueDisabledException)
-			{
-			}
+			token.ThrowIfCancellationRequested();
 		}
 
 		public void PostDelegateToThread(Action action)
@@ -61,7 +60,7 @@ namespace MediaServer.Utility
 			            		IsDone = isDone,
 			            		Delegate = action
 			            	};
-			_queue.Enqueue(tuple);
+			_queue.Add(tuple);
 		}
 
 		public void SendDelegateToThread(Action action)
@@ -72,7 +71,7 @@ namespace MediaServer.Utility
 			            		IsDone = isDone,
 			            		Delegate = action
 			            	};
-			_queue.Enqueue(tuple);
+			_queue.Add(tuple);
 
 			isDone.WaitOne();
 

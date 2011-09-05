@@ -193,12 +193,16 @@ namespace MediaServer.Media
 
 		public static string GetMimeType(string filename)
 		{
-			var extension = Path.GetExtension(filename).Substring(1).ToLower();
-			if (MimeTypes.ContainsKey(extension))
+			var s = Path.GetExtension(filename);
+			if (s != null)
 			{
-				return MimeTypes[extension];
+				var extension = s.Substring(1).ToLower();
+				if (MimeTypes.ContainsKey(extension))
+				{
+					return MimeTypes[extension];
+				}
+				Logger.Instance.Warn("Didnt find mime type for {0}", Path.GetFileName(extension));
 			}
-			Logger.Instance.Warn("Didnt find mime type for {0}", Path.GetFileName(extension));
 			return "application/octet-stream";
 		}
 

@@ -27,10 +27,9 @@ namespace MediaServer.Utility
 	{
 		#region Data
 
-		private uint _versionId = 0;
+		private uint _versionId;
 		private readonly Dictionary<TKey, TValue> _storage = new Dictionary<TKey, TValue>();
 		private readonly ReaderWriterLockSlim _readWriteLock = new ReaderWriterLockSlim();
-
 
 		// Only access from inside write lock
 		private void UpdateVersionId()
@@ -105,7 +104,10 @@ namespace MediaServer.Utility
 		/// <returns>the matching values.</returns>
 		public IEnumerable<TValue> GetMulti(IEnumerable<TKey> keys)
 		{
-			if (keys == null || keys.Count() == 0) return new TValue[0];
+			if (keys == null) return new TValue[0];
+			keys = keys.ToList();
+
+			if (keys.Count() == 0) return new TValue[0];
 
 			var values = new List<TValue>();
 			_readWriteLock.EnterReadLock();
@@ -156,7 +158,10 @@ namespace MediaServer.Utility
 		/// <param name="valuePairs">The value pairs.</param>
 		public void SetMulti(IEnumerable<KeyValuePair<TKey,TValue>> valuePairs)
 		{
-			if (valuePairs == null || valuePairs.Count() == 0) return;
+			if (valuePairs == null) return;
+
+			valuePairs = valuePairs.ToList();
+			if (valuePairs.Count() == 0) return;
 
 			_readWriteLock.EnterWriteLock();
 			try
@@ -201,7 +206,10 @@ namespace MediaServer.Utility
 		/// <param name="keys">The keys.</param>
 		public void DeleteMulti(IEnumerable<TKey> keys)
 		{
-			if (keys == null || keys.Count() == 0) return;
+			if (keys == null) return;
+			keys = keys.ToList();
+			if (keys.Count() == 0) return;
+
 			_readWriteLock.EnterWriteLock();
 			try
 			{
@@ -258,21 +266,16 @@ namespace MediaServer.Utility
 		/// <param name="valuePairs">The value pairs.</param>
 		public void AddMulti(IEnumerable<KeyValuePair<TKey,TValue>> valuePairs)
 		{
-			if (valuePairs == null || valuePairs.Count() == 0) return;
+			if (valuePairs == null) return;
+			valuePairs = valuePairs.ToList();
+			if (valuePairs.Count() == 0) return;
 
 			_readWriteLock.EnterUpgradeableReadLock();
 			
 			try
 			{
-				var toAdd = new List<KeyValuePair<TKey, TValue>>();
-				foreach(var item in valuePairs)
-				{
-					if (!_storage.ContainsKey(item.Key))
-					{
-						toAdd.Add(item);
-					}
-				}
-				
+				var toAdd = valuePairs.Where(item => !_storage.ContainsKey(item.Key)).ToList();
+
 				if (toAdd.Count == 0) return;
 
 				_readWriteLock.EnterWriteLock();
@@ -342,15 +345,7 @@ namespace MediaServer.Utility
 
 			try
 			{
-				var toRemove = new List<KeyValuePair<TKey, TValue>>();
-
-				foreach(var item in valuePairs)
-				{
-					if (_storage.ContainsKey(item.Key))
-					{
-						toRemove.Add(item);
-					}
-				}
+				var toRemove = valuePairs.Where(item => _storage.ContainsKey(item.Key)).ToList();
 
 				if (toRemove.Count == 0) return;
 
@@ -397,7 +392,7 @@ namespace MediaServer.Utility
 		}
 
 		#endregion
-        
+		
 		#region Internal Enumerator
 
 		/// <summary>

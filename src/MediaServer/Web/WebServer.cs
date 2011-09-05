@@ -4,13 +4,12 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using MediaServer.Configuration;
-using MediaServer.Utility;
 
 namespace MediaServer.Web
 {
 	abstract class WebServer
 	{
-        private readonly List<KeyValuePair<String, BaseRequestHandler>> _requestHandlers = new List<KeyValuePair<string, BaseRequestHandler>>();
+		private readonly List<KeyValuePair<String, BaseRequestHandler>> _requestHandlers = new List<KeyValuePair<string, BaseRequestHandler>>();
 		private HttpListener _listener;
 
 		private void ContextHandler(IAsyncResult res)
@@ -45,7 +44,7 @@ namespace MediaServer.Web
 			{
 				_listener = new HttpListener {IgnoreWriteExceptions = true};
 
-			    _listener.Prefixes.Add("http://+:" + Settings.Instance.QueryPort + "/");
+				_listener.Prefixes.Add("http://+:" + Settings.Instance.QueryPort + "/");
 				_listener.Start();
 
 				_listener.BeginGetContext(ContextHandler, _listener);
@@ -62,13 +61,13 @@ namespace MediaServer.Web
 			}
 		}
 
-        public IList<KeyValuePair<String, BaseRequestHandler>> RequestHandlers
-        {
-            get
-            {
-                return _requestHandlers;
-            }
-        }
+		public IList<KeyValuePair<String, BaseRequestHandler>> RequestHandlers
+		{
+			get
+			{
+				return _requestHandlers;
+			}
+		}
 	}
 
 }

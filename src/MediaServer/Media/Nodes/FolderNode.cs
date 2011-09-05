@@ -13,7 +13,7 @@ namespace MediaServer.Media.Nodes
 		private readonly string _title;
 		private readonly ReaderWriterLockSlim _readerWriterLock = new ReaderWriterLockSlim();
 		private readonly List<MediaNode> _children = new List<MediaNode>();
-		private uint _containerUpdateId = 0;
+		private uint _containerUpdateId;
 		
 		public FolderNode(FolderNode parentNode, string title)
 			: base(parentNode)

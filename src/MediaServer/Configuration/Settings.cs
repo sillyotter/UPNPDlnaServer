@@ -3,9 +3,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using System.Xml;
 using System.Xml.Serialization;
 using MediaServer.Utility;
 
@@ -24,34 +22,34 @@ namespace MediaServer.Configuration
 		}
 
 		[XmlAttribute("mediaPort")]
-		public int MediaPort { get; private set; }
+		public int MediaPort { get; set; }
 
 		[XmlAttribute("queryPort")]
-		public int QueryPort { get; private set; }
+		public int QueryPort { get; set; }
 	}
 
 	abstract public class NamedPathMediaElememnt
 	{
-		public NamedPathMediaElememnt() : this("Unknown", "Unknown")
+		protected NamedPathMediaElememnt() : this("Unknown", "Unknown")
 		{
 		}
 
-		public NamedPathMediaElememnt(string name, string path)
+		protected NamedPathMediaElememnt(string name, string path)
 		{
 			Name = name;
 			Path = path;
 		}
 
 		[XmlAttribute("name")]
-		public string Name { get; private set; }
+		public string Name { get; set; }
 
 		[XmlAttribute("path")]
-		public string Path { get; private set; }
+		public string Path { get; set; }
 	}
 
 	public class Directory : NamedPathMediaElememnt
 	{
-		public Directory() : base()
+		public Directory()
 		{
 		}
 
@@ -75,15 +73,15 @@ namespace MediaServer.Configuration
 		}
 		
 		[XmlAttribute("src")]
-		public string Source { get; private set; }
+		public string Source { get; set; }
 
 		[XmlAttribute("dest")]
-		public string Destination { get; private set; }
+		public string Destination { get; set; }
 	}
 
 	public class iTunes : NamedPathMediaElememnt
 	{
-		public iTunes() : base() 
+		public iTunes()
 		{
 		}
 
@@ -91,12 +89,12 @@ namespace MediaServer.Configuration
 		{
 		}
 
-		public RemapConfiguration Remap { get; private set; }
+		public RemapConfiguration Remap { get; set; }
 	}
 
 	public class iPhoto : NamedPathMediaElememnt
 	{
-		public iPhoto() : base()
+		public iPhoto()
 		{
 		}
 
@@ -104,7 +102,7 @@ namespace MediaServer.Configuration
 		{
 		}
 
-		public RemapConfiguration Remap { get; private set; }
+		public RemapConfiguration Remap { get; set; }
 	}
 
 	public class IconConfiguration
@@ -117,25 +115,17 @@ namespace MediaServer.Configuration
 			Server = "ServerIcon.png";
 		}
 
-		public IconConfiguration(string movie, string music, string image, string server)
-		{
-			Movie = movie;
-			Music = music;
-			Image = image;
-			Server = server;
-		}
-
 		[XmlAttribute("movie")]
-		public string Movie { get; private set; }
+		public string Movie { get; set; }
 
 		[XmlAttribute("music")]
-		public string Music { get; private set; }
+		public string Music { get; set; }
 
 		[XmlAttribute("image")]
-		public string Image { get; private set; }
+		public string Image { get; set; }
 
 		[XmlAttribute("server")]
-		public string Server { get; private set; }
+		public string Server { get; set; }
 	}
 
 	public class Configuration
@@ -147,15 +137,15 @@ namespace MediaServer.Configuration
 			Media = new List<NamedPathMediaElememnt>();
 		}
 
-		public NetworkConfiguration Network { get; private set; }
-		public IconConfiguration Icons { get; private set; }
+		public NetworkConfiguration Network { get; set; }
+		public IconConfiguration Icons { get; set; }
 
 		[
 			XmlElement(typeof(Directory), ElementName="Directory"),
 			XmlElement(typeof(iTunes), ElementName="iTunes"),
 			XmlElement(typeof(iPhoto), ElementName="iPhoto")
 		]
-		public List<NamedPathMediaElememnt> Media { get; private set; }
+		public List<NamedPathMediaElememnt> Media { get; set; }
 	}
 
 	sealed class Settings
@@ -190,7 +180,8 @@ namespace MediaServer.Configuration
 			ProcessFile(filename);
 
 			_watcher.IncludeSubdirectories = false;
-			_watcher.Path = Path.GetDirectoryName(filename);
+			var dir = Path.GetDirectoryName(filename);
+			_watcher.Path = String.IsNullOrEmpty(dir) ? "." : dir; 
 			_watcher.Filter = Path.GetFileName(filename);
 			_watcher.EnableRaisingEvents = true;
 			_watcher.NotifyFilter = NotifyFilters.LastWrite;
@@ -263,15 +254,22 @@ namespace MediaServer.Configuration
 		}
 
 		public string ServerName { get { return "MacOSX UPnP/1.0 GUPNPMS/0.1"; } }
-		public string FriendlyName { get; private set; }
+		public string FriendlyName { get; set; }
 		public Guid DeviceId { get; private set; }
 		public int QueryPort { get { return _configuration.Network.QueryPort;  } }
 		public int MediaPort { get { return _configuration.Network.MediaPort;  } }
 		public string StaticResources 
 		{
-	 		get
+			get
 			{
-				return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "MediaServer/Resources/");
+				var location = Assembly.GetExecutingAssembly().Location;
+
+				var dirname = Path.GetDirectoryName(location);
+#if (WIN32)
+				return dirname != null ? Path.Combine(dirname, "Resources/") : "./Resources/";
+#else
+				return dirname != null ? Path.Combine(dirname, "MediaServer/Resources/") : "./MediaServer/Resources/";
+#endif
 			}
 		}		
 

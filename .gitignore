@@ -2,3 +2,7 @@
 bin/
 build/
 support/lighttpd-1.4.29/
+
+/src/MediaServer/_ReSharper.MediaServer
+/src/MediaServer/obj
+/src/MediaServer/bin

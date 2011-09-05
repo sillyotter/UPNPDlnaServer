@@ -11,9 +11,9 @@ namespace MediaServer.Media.Nodes
 	{
 		private readonly string _source;
 		private readonly FileSystemWatcher _watcher = new FileSystemWatcher();
-		private readonly MediaServer.Configuration.RemapConfiguration _remap;
+		private readonly Configuration.RemapConfiguration _remap;
 		
-		public iPhotoFolderNode(FolderNode parentNode, string title, string source, MediaServer.Configuration.RemapConfiguration remap) 
+		public iPhotoFolderNode(FolderNode parentNode, string title, string source, Configuration.RemapConfiguration remap) 
 			: base(parentNode, title)
 		{
 			_source = source;
@@ -35,18 +35,18 @@ namespace MediaServer.Media.Nodes
 			parseCommand.BeginInvoke(path, parseCommand.EndInvoke, null);
 		}
 				
-		private void OnChanged(object sender, FileSystemEventArgs args)
-		{
-			_watcher.EnableRaisingEvents = false;
+		//private void OnChanged(object sender, FileSystemEventArgs args)
+		//{
+		//    _watcher.EnableRaisingEvents = false;
 			
-			foreach(var node in this)
-			{
-				node.RemoveFromIndexes();
-			}
-			Clear();
+		//    foreach(var node in this)
+		//    {
+		//        node.RemoveFromIndexes();
+		//    }
+		//    Clear();
 
-			ProcessFileInBackground(_source);
-		}
+		//    ProcessFileInBackground(_source);
+		//}
 		
 		private static object MergeNodes(XElement node, IDictionary<string,XElement> data)
 		{
@@ -86,7 +86,9 @@ namespace MediaServer.Media.Nodes
 				
 				var viewableImages = 
 					from image in images
-					let ext = Path.GetExtension((string)image.Element("ImagePath")).ToLower()
+					let extension = Path.GetExtension((string)image.Element("ImagePath"))
+					where extension != null
+					let ext = extension.ToLower()
 					where ext != ".tiff" && ext != ".tif"
 					select image;
 

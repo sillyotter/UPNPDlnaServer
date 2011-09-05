@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{32AB3872-D2FB-4A01-9B02-DECB270A279C}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MediaServer</RootNamespace>
+    <AssemblyName>MediaServer</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;WIN32</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="taglib-sharp">
+      <HintPath>..\..\lib\taglib-sharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\Settings.cs" />
+    <Compile Include="Media\IMediaRepository.cs" />
+    <Compile Include="Media\MediaRepository.cs" />
+    <Compile Include="Media\MimeTypeLookup.cs" />
+    <Compile Include="Media\Nodes\AVFileNode.cs" />
+    <Compile Include="Media\Nodes\FileNode.cs" />
+    <Compile Include="Media\Nodes\FilesystemFolderNode.cs" />
+    <Compile Include="Media\Nodes\FolderNode.cs" />
+    <Compile Include="Media\Nodes\ImageNode.cs" />
+    <Compile Include="Media\Nodes\iPhotoFolderNode.cs" />
+    <Compile Include="Media\Nodes\iTunesFolderNode.cs" />
+    <Compile Include="Media\Nodes\MediaNode.cs" />
+    <Compile Include="Media\Nodes\MovieNode.cs" />
+    <Compile Include="Media\Nodes\MusicNode.cs" />
+    <Compile Include="Media\Nodes\ResourceNode.cs" />
+    <Compile Include="Media\UpnpTypeLookup.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="SSDP\Messages\UpnpAdvertiseMessage.cs" />
+    <Compile Include="SSDP\Messages\UpnpAnnounceMessage.cs" />
+    <Compile Include="SSDP\Messages\UpnpMessage.cs" />
+    <Compile Include="SSDP\Messages\UpnpRevokeMessage.cs" />
+    <Compile Include="SSDP\Messages\UpnpSearchMessage.cs" />
+    <Compile Include="SSDP\Messages\UpnpSearchResponse.cs" />
+    <Compile Include="SSDP\Messages\UpnpTypes.cs" />
+    <Compile Include="SSDP\UpnpDiscoveryMessageReceivedEventArgs.cs" />
+    <Compile Include="SSDP\UpnpDiscoveryService.cs" />
+    <Compile Include="SSDP\UpnpMediaServerMessageHandler.cs" />
+    <Compile Include="Utility\BlockingQueue.cs" />
+    <Compile Include="Utility\EnumerableExtensions.cs" />
+    <Compile Include="Utility\Logger.cs" />
+    <Compile Include="Utility\ReadWriteLockedCache.cs" />
+    <Compile Include="Utility\SingleThreadExecutionContext.cs" />
+    <Compile Include="Web\BaseRequestHandler.cs" />
+    <Compile Include="Web\BaseSoapHandler.cs" />
+    <Compile Include="Web\ConnectionManager.cs" />
+    <Compile Include="Web\ContentDirectory.cs" />
+    <Compile Include="Web\Lighttpd.cs" />
+    <Compile Include="Web\MusicImageHandler.cs" />
+    <Compile Include="Web\SoapActionAttribute.cs" />
+    <Compile Include="Web\SoapParameterAttribute.cs" />
+    <Compile Include="Web\StaticFileHandler.cs" />
+    <Compile Include="Web\UpnpWebServer.cs" />
+    <Compile Include="Web\WebServer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Documentation\ConnectionManager1.0.pdf" />
+    <None Include="Documentation\ContentDirectory1.0.pdf" />
+    <None Include="Documentation\MediaServer1.0.pdf" />
+    <None Include="Documentation\UPnP-arch-DeviceArchitecture-v1.0-20080424.pdf" />
+    <None Include="Documentation\UPnPAvArchtiecture0.83.pdf" />
+    <None Include="lighttpd.conf.tmpl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\MediaServer\Source\book-icon.xcf" />
+    <None Include="Resources\MediaServer\Source\psd-clapboard-icon.xcf" />
+    <None Include="Resources\MediaServer\Source\ServerIconMaster.graffle" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Configuration.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\images\ui-bg_flat_0_aaaaaa_40x100.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\images\ui-bg_flat_75_ffffff_40x100.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\images\ui-bg_glass_55_fbf9ee_1x400.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\images\ui-bg_glass_65_ffffff_1x400.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\images\ui-bg_glass_75_dadada_1x400.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\images\ui-bg_glass_75_e6e6e6_1x400.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\images\ui-bg_glass_95_fef1ec_1x400.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\images\ui-bg_highlight-soft_75_cccccc_1x100.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\images\ui-icons_222222_256x240.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\images\ui-icons_2e83ff_256x240.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\images\ui-icons_454545_256x240.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\images\ui-icons_888888_256x240.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\images\ui-icons_cd0a0a_256x240.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\css\smoothness\jquery-ui-1.8.6.custom.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\favicon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\js\jquery-1.4.3.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\js\jquery-ui-1.8.6.custom.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\MediaServer\ConnectionManager.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\MediaServer\ContentDirectory.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\MediaServer\DeviceDescription.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\MediaServer\ImageIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\MediaServer\MovieIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\MediaServer\MusicIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\MediaServer\ServerIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\MediaServer\Source\FolderStack\IMG_0012.JPG" />
+    <Content Include="Resources\MediaServer\Source\FolderStack\IMG_0089.JPG" />
+    <Content Include="Resources\MediaServer\Source\FolderStack\IMG_0227.jpg" />
+    <Content Include="Resources\MediaServer\Source\FolderStack\PhotoStack.svg" />
+    <Content Include="Resources\MediaServer\Source\treble-clef.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
