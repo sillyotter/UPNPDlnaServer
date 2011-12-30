@@ -5,8 +5,11 @@ server.document-root = "{{docroot}}"
 server.username = "nobody"
 server.groupname = "nogroup"
 server.force-lowercase-filenames = "disable"
-server.max-keep-alive-requests = 0
-connection.kbytes-per-second = 4096
+#server.max-keep-alive-requests = 0
+#connection.kbytes-per-second = 4096
+server.max-write-idle = 1800
+server.max-keep-alive-idle = 1800
+server.max-keep-alive-request = 64
 server.event-handler = "linux-sysepoll"
 server.network-backend = "linux-sendfile"
 
