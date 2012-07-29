@@ -1,6 +1,5 @@
 # lighttpd config file
 
-
 server.port = {{port}}
 server.document-root = "{{docroot}}"
 server.username = "nobody"
@@ -16,7 +15,7 @@ server.network-backend = "linux-sendfile"
 
 server.modules = ( "mod_alias", "mod_expire" )
 
-dir-listing.activate = "disable"
+dir-listing.activate = "enable"
 index-file.names = ( "index.html", "index.htm" )
 expire.url = ( "" => "access plus 1 days" )
 
@@ -27,7 +26,3 @@ mimetype.assign = (
 
 {{aliases}}
 
-$HTTP["url"] =~ "^/movies/" {
-	dir-listing.activate = "enable"
-	server.document-root = "/srv/Media/Movies/"
-}
