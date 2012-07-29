@@ -1,9 +1,5 @@
 # lighttpd config file
 
-$HTTP["url"] =~ "^/movies/" {
-		dir-listing.activate="enable"
-		server.document-root = "/srv/Media/Movies/"
-	}
 
 server.port = {{port}}
 server.document-root = "{{docroot}}"
@@ -31,5 +27,7 @@ mimetype.assign = (
 
 {{aliases}}
 
-
-
+$HTTP["url"] =~ "^/movies/" {
+	dir-listing.activate = "enable"
+	server.document-root = "/srv/Media/Movies/"
+}
