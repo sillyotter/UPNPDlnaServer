@@ -25,12 +25,12 @@ function build() {
 
 	if [ ! -e bin/lighttpd ]
 	then
-		if [ ! -e support/lighttpd-1.4.28 ]
+		if [ ! -e support/lighttpd-1.4.31 ]
 		then
 			echo "Building lighttpd..."
 			cd support
-			tar xzf lighttpd-1.4.29.tar.gz
-			cd lighttpd-1.4.29
+			tar xzf lighttpd-1.4.31.tar.gz
+			cd lighttpd-1.4.31
 			mkdir build
 			./configure --prefix=`pwd`/build > /dev/null 2>&1
 			make install > /dev/null 2>&1
@@ -38,7 +38,7 @@ function build() {
 		fi
 
 		mkdir bin/lighttpd
-		cp -R support/lighttpd-1.4.29/build/* bin/lighttpd
+		cp -R support/lighttpd-1.4.31/build/* bin/lighttpd
 	fi
 
 
