@@ -90,8 +90,8 @@ namespace MediaServer.Media
 			AddiTunesFolders(root);
 			AddiPhotoFolders(root);
 			
-			var onlineFolder = new FolderNode(root, "Online");
-			root.Add(onlineFolder);
+			//var onlineFolder = new FolderNode(root, "Online");
+			//root.Add(onlineFolder);
 
 			// This makes no sense.  how is this possible?  I guess mf. itf, or pf will be null if /Volumesn isnt up yet
 			// so I guess this should stay...  got to think about it...

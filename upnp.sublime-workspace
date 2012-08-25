@@ -11,9 +11,17 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 72.0,
+		"height": 49.0,
 		"selected_items":
 		[
+			[
+				"Package Control: inst",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ins",
+				"Package Control: Install Package"
+			],
 			[
 				"Package Control: up",
 				"Package Control: Upgrade/Overwrite All Packages"
@@ -40,6 +48,15 @@
 	},
 	"file_history":
 	[
+		"/Users/guyoliver/Projects/UPNP/src/MediaServer/Program.cs",
+		"/Users/guyoliver/Projects/UPNP/src/MediaServer/Utility/Logger.cs",
+		"/Users/guyoliver/Projects/UPNP/src/MediaServer/Media/MediaRepository.cs",
+		"/Users/guyoliver/Projects/UPNP/src/MediaServer/Media/Nodes/AVFileNode.cs",
+		"/Users/guyoliver/Projects/UPNP/support/lighttpd-1.4.31/README",
+		"/Applications/Sublime Text 2.app/Contents/MacOS/Pristine Packages/C#.sublime-package",
+		"/Applications/Sublime Text 2.app/Contents/Resources/C#.icns",
+		"/Users/guyoliver/Projects/UPNP/build.sh",
+		"/Users/guyoliver/Library/Application Support/Sublime Text 2/Packages/User/C#.sublime-settings",
 		"/Users/guyoliver/Desktop/medone.txt",
 		"/Users/guyoliver/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
 		"/Users/guyoliver/Projects/MedOne/Shared/MedOne.PortableModel/MedTherapeuticSubstitution.cs",
@@ -135,6 +152,10 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"mediarep",
+				"src/MediaServer/Media/MediaRepository.cs"
+			]
 		],
 		"width": 0.0
 	},
@@ -148,8 +169,8 @@
 	},
 	"show_minimap": true,
 	"show_open_files": true,
-	"show_tabs": false,
+	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 318.0,
+	"side_bar_width": 268.0,
 	"status_bar_visible": true
 }

@@ -6,7 +6,7 @@ namespace MediaServer.Utility
 {
 	public enum LogLevel { Exception = 0, Error = 1, Warning = 2, Info = 3, Debug = 4 }
 
-	public class Logger
+	public sealed class Logger
 	{
 		private readonly SingleThreadExecutionContext _context = new SingleThreadExecutionContext();
 		private TextWriter _output = Console.Out;
