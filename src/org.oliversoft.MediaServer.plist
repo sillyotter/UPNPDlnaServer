@@ -18,7 +18,7 @@ http://www.apple.com/DTDs/PropertyList-1.0.dtd >
 		<key>RunAtLoad</key>
 		<true/>
 		<key>WorkingDirectory</key>
-		<string>/Users/guyoliver/Project/Private/UPNP/bin/</string>
+		<string>/Users/me/Project/Private/UPNP/bin/</string>
 		<key>HopefullyExitsFirst</key>
 		<true/>
 		<key>LowPriorityIO</key>
